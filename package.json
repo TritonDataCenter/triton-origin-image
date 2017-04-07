@@ -1,0 +1,19 @@
+{
+  "name": "triton-origin-image",
+  "description": "an origin image for Triton DataCenter core components",
+  "version": "1.0.0",
+  "author": "Joyent (joyent.com)",
+  "private": true,
+  "homepage": "https://github.com/joyent/triton-origin-image",
+  "dependencies": {
+    "triton": "5.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/joyent/triton-origin-image.git"
+  },
+  "engines": {
+    "node": ">=4.x"
+  },
+  "license": "MPL-2.0"
+}
