@@ -1,11 +1,13 @@
 {
   "name": "triton-origin-image",
-  "description": "an origin image for Triton DataCenter core components",
+  "description": "origin images for Triton DataCenter core components",
   "version": "1.0.0",
   "author": "Joyent (joyent.com)",
   "private": true,
   "homepage": "https://github.com/joyent/triton-origin-image",
   "dependencies": {
+    "json": "9.0.6",
+    "manta": "4.3.0",
     "triton": "5.2.0"
   },
   "repository": {

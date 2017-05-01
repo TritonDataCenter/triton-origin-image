@@ -5,28 +5,60 @@
 #
 
 NPM = npm
-CREATE_IMAGE = ./create-image.sh
-CONFIG = ./data.json
+JSON = ./node_modules/.bin/json
 
-# Should this default to /Joyent_Dev/stor/builds/.... ?
-MANTA_PATH =
+# Gather build info (based on
+# https://github.com/joyent/eng/blob/master/tools/mk/Makefile.defs#L34-L48)
+_AWK := $(shell (which gawk >/dev/null && echo gawk) \
+	|| (which nawk >/dev/null && echo nawk) \
+	|| echo awk)
+BRANCH := $(shell git symbolic-ref HEAD | $(_AWK) -F/ '{print $$3}')
+ifeq ($(TIMESTAMP),)
+	TIMESTAMP := $(shell date -u "+%Y%m%dT%H%M%SZ")
+endif
+GITHASH := $(shell git log -1 --pretty='%H')
 
-# -------
 
 #
 # Targets
 #
-.PHONY: all image
 
-all: npm-0-stamp image-0-stamp
+.PHONY: all
+all: build/buildinfo.json build/image-0-stamp
 
-npm-0-stamp:
+$(JSON):
 	$(NPM) install
+
+build/buildinfo.json: | $(JSON)
+	mkdir -p build/
+	echo '{}' \
+		| $(JSON) -e "this.branch='$(BRANCH)'" \
+			-e "this.timestamp='$(TIMESTAMP)'" \
+			-e "this.git='$(GITHASH)'" \
+		> $@
+
+.PHONY: buildinfo
+buildinfo: build/buildinfo.json
+
+.PHONY: images
+images: build/image-0-stamp
+
+build/image-0-stamp: build/buildinfo.json images.json
+	./tools/build-images.sh -b build/buildinfo.json -i images.json
 	touch $@
 
-image-0-stamp: npm-0-stamp
-	$(CREATE_IMAGE) -f $(CONFIG) $(MANTA_PATH)
-	touch $@
+publish:
+	echo "not yet implemented (TODO)"
+	false
 
+.PHONY: check
+check:
+	@echo "check ok"
+
+.PHONY: clean
 clean:
-	rm -f npm-0-stamp image-0-stamp
+	rm -rf build
+
+.PHONY: distclean
+distclean: clean
+	rm -rf node_modules
