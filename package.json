@@ -6,6 +6,7 @@
   "private": true,
   "homepage": "https://github.com/joyent/triton-origin-image",
   "dependencies": {
+    "imgapi-cli": "git+https://github.com/joyent/sdc-imgapi-cli.git#v2.2.5",
     "json": "9.0.6",
     "manta": "4.3.0",
     "triton": "5.2.0"

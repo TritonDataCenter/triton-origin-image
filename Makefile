@@ -47,9 +47,8 @@ build/image-0-stamp: build/buildinfo.json images.json
 	./tools/build-images.sh -b build/buildinfo.json -i images.json
 	touch $@
 
-publish:
-	echo "not yet implemented (TODO)"
-	false
+publish: build/buildinfo.json
+	./tools/publish-images.sh -b build/buildinfo.json
 
 .PHONY: check
 check:

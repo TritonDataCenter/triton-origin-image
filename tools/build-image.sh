@@ -109,7 +109,6 @@ imageVersion=$(cat $TOP/package.json | json version)
 imageHomepage=$(cat $TOP/package.json | json homepage)
 imageDesc=$(echo "$imageConfig" | json desc)
 protoMinMemoryMb=$(echo "$imageConfig" | json protoMinMemoryMb)
-mantaUrl=$(echo "$imageConfig" | json mantaUrl)
 tritonAccount=$(triton profile get -j | json account)
 tritonKeyId=$(triton profile get -j | json keyId)
 branch=$(echo "$buildinfo" | json branch)
@@ -125,12 +124,14 @@ originManifest=$(triton image get $originUuid)
 [[ $(echo "$originManifest" | json name) == "$originName" ]] \
     && [[ $(echo "$originManifest" | json version) == "$originVersion" ]] \
     || fatal "origin.uuid, $originUuid, does not match name@version in image config: $originName@$originVersion"
+#XXX Something isn't working here. It was empty in latest build.
 originMinPlatform=$(echo "$originManifest" | json 'requirements.min_platform["7.0"]')
 
 
 trap cleanup ERR
 
-export MANTA_URL=$mantaUrl
+# Hardcoded MANTA_URL b/c can't get from CloudAPI.
+export MANTA_URL=https://us-east.manta.joyent.com
 export MANTA_USER=$tritonAccount
 export MANTA_KEY_ID=$tritonKeyId
 unset MANTA_TLS_INSECURE  # not yet supported

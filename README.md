@@ -48,7 +48,7 @@ Triton-origin images are named and versioned as follows:
     version = <version string from ./package.json>
 
 where `$pkgsrcArch` is one of "multiarch" (the typical arch per discussion in
-RFD 46), "i386", or "x86_64"; and "$originVer" is the version of the origin
+RFD 46), "i386", or "x86\_64"; and "$originVer" is the version of the origin
 image on which the triton-origin image is based.
 
 For example, a triton-origin image based on "minimal-multiarch-lts@15.4.1" will
@@ -98,8 +98,6 @@ TODO(trentm): I need to verify if manually releasing the triton-origin images
 should happen) automatically as part of building component images to the
 "staging" channel as part of the Triton release process.
 
-    make publish    # not yet implemented (TODO)
-
 
 ## Notes for consumers
 
@@ -109,7 +107,6 @@ flavour, and find a current UUID; and any other implications, like the
 
 
 ## Dev Notes
-
 
 ### minimal 16.4.1
 
@@ -123,8 +120,8 @@ through the deholer.
 
 Currently there is no good way to infer the linked `MANTA_URL` for a given
 Triton CLI profile (aka CloudAPI). It would be nice to have that on the
-cloudapi's ListServices. Therefore we need to hardcode 'mantaUrl' in the
-images.json config.
+cloudapi's ListServices. Therefore we need to hardcode the Manta URL in the
+scripts.
 
 
 ## License
