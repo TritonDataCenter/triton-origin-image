@@ -120,11 +120,10 @@ mantaLatestLink=/$tritonAccount/public/builds/triton-origin-image/$branch-latest
 
 
 # Validate that origin.uuid matches origin.{name,version} as a sanity check.
-originManifest=$(triton image get $originUuid)
+originManifest=$(joyent-imgadm get $originUuid)
 [[ $(echo "$originManifest" | json name) == "$originName" ]] \
     && [[ $(echo "$originManifest" | json version) == "$originVersion" ]] \
     || fatal "origin.uuid, $originUuid, does not match name@version in image config: $originName@$originVersion"
-#XXX Something isn't working here. It was empty in latest build.
 originMinPlatform=$(echo "$originManifest" | json 'requirements.min_platform["7.0"]')
 
 
