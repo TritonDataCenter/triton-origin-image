@@ -31,9 +31,108 @@ origin images for all Triton and Manta VM components:
 
 ## How to use triton-origin images
 
+This section has the instructions for a Triton or Manta component to switch
+to using a triton-origin image.
+
+1. Find the latest released set of triton-origin images:
+
+        updates-imgadm -C release list --latest name=~triton-origin-
+
+    For example:
+
+        $ updates-imgadm -C release list --latest name=~triton-origin- version=1.0.0
+        UUID                                  NAME                            VERSION  FLAGS  OS       PUBLISHED
+        e24bd5b7-f06b-4d6a-84f1-45c0b342e4d2  triton-origin-multiarch-15.4.1  1.0.0    I      smartos  2017-05-02T06:42:18Z
+
+    and choose the flavour you want. In our example (and at the time of
+    writing) there is only *one* flavour, so that's easy.
+
+2. Update `"image_uuid": "<uuid from step 1>"` for your component in
+   ["targets.json.in" in
+   MG](https://github.com/joyent/mountain-gorilla/blob/master/targets.json.in).
+   This tells the MG-based build to use that origin for image creation.
+
+   For example for VMAPI, we'd update
+   [here](https://github.com/joyent/mountain-gorilla/blob/53f3f76e4dda86e48dbfd07c61faee9814626b2a/targets.json.in#L603-L604).
+
+3. If you are moving from a *non*-triton-origin image, then you can remove
+   the set of pkgsrc packages that are included in triton-origin images
+   from the "pkgsrc" field in "targets.json.in". The included triton-origin
+   packages are:
+
+        coreutils
+        curl
+        gsed
+        patch
+        sudo
+
+4. If your component uses [sdcnode](https://github.com/joyent/sdcnode) (most
+   currently do), then you may need to update `NODE_PREBUILT_` variables in
+   your Makefile. You probably have a block like this:
+
+        NODE_PREBUILT_VERSION=v4.6.1
+        ifeq ($(shell uname -s),SunOS)
+            NODE_PREBUILT_TAG=zone
+            // sdc-minimal-multiarch-lts@15.4.1
+            NODE_PREBUILT_IMAGE=18b094b0-eb01-11e5-80c1-175dac7ddf02
+        endif
+
+    That `NODE_PREBUILT_IMAGE` value needs to be the image UUID of sdcnode
+    builds which is *compatible* with the triton-origin flavour you are using.
+    "Compatible" here means that it is based on the same `$pkgsrcArch` and
+    `$baseVersion` of the minimal/base origin image. Use the table and example
+    below.
+
+    For example, say you are using "triton-origin-multiarch-15.4.1@1.0.0".
+    That is [based on](./images.json#L5-L9) "minimal-multiarch-lts@15.4.1".
+    From <https://download.joyent.com/pub/build/sdcnode/README.html> we see
+    that there are sdcnode builds for "sdc-minimal-multiarch-lts@15.4.1:
+    18b094b0-eb01-11e5-80c1-175dac7ddf02". Therefore we want:
+
+        NODE_PREBUILT_IMAGE=18b094b0-eb01-11e5-80c1-175dac7ddf02
+
+5. Update Jenkins (Joyent's current CI system) configuration for your
+   component's job to get an appropriate Jenkins Agent. Specifically the
+   "Label Expression" of the job configuration needs to be updated.
+   See the compatibility table below.
+
+
+### sdcnode compatibility with triton-origin images
+
+Ultimately the authority for which sdcnode builds and triton-origin images are
+available is in the [triton-origin images.json](./images.json) and [sdcnode
+nodeconfigs.json](https://github.com/joyent/sdcnode/blob/master/nodeconfigs.json)
+files. We will try to keep this table up to date:
+
+| triton-origin image            | based on                     | sdcnode compatible build         | `NODE_PREBUILT_VERSION`              |
+| ------------------------------ | ---------------------------- | -------------------------------- | ------------------------------------ |
+| triton-origin-multiarch-15.4.1 | minimal-multiarch-lts@15.4.1 | sdc-minimal-multiarch-lts@15.4.1 | 18b094b0-eb01-11e5-80c1-175dac7ddf02 |
+| -                              | -                            | sdc-base@14.2.0                  | de411e86-548d-11e4-a4b7-3bb60478632a |
+| -                              | -                            | sdc-multiarch@13.3.1             | b4bdc598-8939-11e3-bea4-8341f6861379 |
+| -                              | -                            | sdc-smartos@1.6.3                | fd2cc906-8938-11e3-beab-4359c665ac99 |
+
+
+- Q: Why does sdcnode have "sdc-"-prefixed images?
+  A: Because that's what we did before RFD 46 and triton-origin images. We
+  copied the public "base/smartos/minimal" image and prefixed with "sdc-" to
+  allow having a different lifetime for Triton component origin images than
+  for public usage of those images. This was partially necessitated because
+  many Triton/Manta components still use the long deprecated "smartos@1.6.3"
+  origin image.
+
 TODO: Notes for how Triton/Manta components should choose a triton-origin
 flavour, and find a current UUID; and any other implications, like the
 `NODE_PREBUILD_IMAGE` value in their Makefile.
+
+
+### Joyent Jenkins agent labels compatibility with triton-origin images
+
+| triton-origin image            | Jenkins agent labels                      |
+| ------------------------------ | ----------------------------------------- |
+| triton-origin-multiarch-15.4.1 | image_ver:15.4.1 && pkgsrc_arch:multiarch |
+
+See the internal <https://mo.joyent.com/docs/engdoc/master/jenkins/index.html#agent-labels>
+for details.
 
 
 ## Development of triton-origin images
