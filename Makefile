@@ -43,10 +43,14 @@ buildinfo: build/buildinfo.json
 .PHONY: images
 images: build/image-0-stamp
 
+# Build all images spec'd in images.json and upload to Manta builds area,
+# e.g. /Joyent_Dev/public/builds/triton-origin-image/...
 build/image-0-stamp: build/buildinfo.json images.json
 	./tools/build-images.sh -b build/buildinfo.json -i images.json
 	touch $@
 
+# Publish the built images (identified via "buildinfo.json") to
+# updates.joyent.com.
 publish: build/buildinfo.json
 	./tools/publish-images.sh -b build/buildinfo.json
 

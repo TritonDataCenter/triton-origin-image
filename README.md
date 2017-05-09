@@ -5,8 +5,8 @@ guidelines](https://github.com/joyent/triton/blob/master/CONTRIBUTING.md) --
 *Triton does not use GitHub PRs* -- and general documentation at the main
 [Triton project](https://github.com/joyent/triton) page.
 
-This repository defines how "triton-origin" images -- for as the origin image for
-core Triton (and Manta) components -- are built. See [RFD 0046: RFD 46 Origin
+This repository defines how "triton-origin" images -- for use as the origin
+image for core Triton (and Manta) components -- are built. [RFD 46: Origin
 images for Triton and Manta core
 images](https://github.com/joyent/rfd/tree/master/rfd/0046) is the primary
 design document for this repo. The goal is to provide a single (or small set) of
@@ -16,22 +16,25 @@ origin images for all Triton and Manta VM components:
 - to have a well documented common base to help with maintenance.
 
 
-
 ## tl;dr
 
 - This repo builds one or more "triton-origin-$pkgsrcArch-$originVer@$version"
   images, e.g. "triton-origin-multiarch-15.4.1@1.0.0", and publishes them to
-  updates.joyent.com. (See the "Building triton-origin images" section below.)
+  updates.joyent.com and images.joyent.com. (See the "Building triton-origin
+  images" section below.)
 - After sanity testing, those images are "released" for use by Triton/Manta
   components. (See the "Releasing triton-origin images" section below.)
 - A Triton/Manta core component, say VMAPI, uses one of these images as the
   origin image on which "vmapi" images are built. (See the "How to use
   triton-origin images" section below.)
 
+If you are a Triton/Manta developer working on any of its services, then you
+mostly likely only need to care about "How to use triton-origin images".
+
 
 ## How to use triton-origin images
 
-This section has the instructions for a Triton or Manta component to switch
+This section has the instructions for a switching a Triton or Manta component
 to using a triton-origin image.
 
 1. Find the latest released set of triton-origin images:
@@ -73,17 +76,18 @@ to using a triton-origin image.
         NODE_PREBUILT_VERSION=v4.6.1
         ifeq ($(shell uname -s),SunOS)
             NODE_PREBUILT_TAG=zone
-            // sdc-minimal-multiarch-lts@15.4.1
+            # This is sdc-minimal-multiarch-lts@15.4.1, compat with
+            # triton-origin-multiarch-15.4.1.
             NODE_PREBUILT_IMAGE=18b094b0-eb01-11e5-80c1-175dac7ddf02
         endif
 
     That `NODE_PREBUILT_IMAGE` value needs to be the image UUID of sdcnode
-    builds which is *compatible* with the triton-origin flavour you are using.
+    builds which are *compatible* with the triton-origin flavour you are using.
     "Compatible" here means that it is based on the same `$pkgsrcArch` and
-    `$baseVersion` of the minimal/base origin image. Use the table and example
-    below.
+    `$baseVersion` of the minimal/base origin image. Use the "sdcnode
+    compatibility with triton-origin images" table and example below.
 
-    For example, say you are using "triton-origin-multiarch-15.4.1@1.0.0".
+    For example, say you are using "triton-origin-multiarch-15.4.1@1.0.1".
     That is [based on](./images.json#L5-L9) "minimal-multiarch-lts@15.4.1".
     From <https://download.joyent.com/pub/build/sdcnode/README.html> we see
     that there are sdcnode builds for "sdc-minimal-multiarch-lts@15.4.1:
@@ -118,11 +122,7 @@ files. We will try to keep this table up to date:
   allow having a different lifetime for Triton component origin images than
   for public usage of those images. This was partially necessitated because
   many Triton/Manta components still use the long deprecated "smartos@1.6.3"
-  origin image.
-
-TODO: Notes for how Triton/Manta components should choose a triton-origin
-flavour, and find a current UUID; and any other implications, like the
-`NODE_PREBUILD_IMAGE` value in their Makefile.
+  origin image. Eventually, these sdcnode flavours will be phased out.
 
 
 ### Joyent Jenkins agent labels compatibility with triton-origin images
@@ -142,10 +142,14 @@ The triton-origin images to be built are defined in
 large number of origin images in play that can increase the size of the Triton
 headnode build on the USB key; and to avoid testing/maintenance surface area.
 
-At this time, the active set of triton-origin images is defined by the
-Triton/Manta components' `image_uuid` UUID value in [MG's
+The active set of triton-origin images is defined by the Triton/Manta
+components' `image_uuid` UUID value in [MG's
 targets.json.in](https://github.com/joyent/mountain-gorilla/blob/master/targets.json.in).
 Those UUIDs refer to origin images published to <https://updates.joyent.com>.
+
+For Joyent Engineering, the "triton-origin-image" Jenkins job handles building
+triton-origin images for pushes to "master". The "Releasing ..." step is still
+manual.
 
 
 ### Naming and versioning
@@ -153,20 +157,21 @@ Those UUIDs refer to origin images published to <https://updates.joyent.com>.
 Triton-origin images are named and versioned as follows:
 
     name = "triton-origin-$pkgsrcArch-$originVer"
-    version = <version string from ./package.json>
+    version = "<version string from ./package.json>"
 
-where `$pkgsrcArch` is one of "multiarch" (the typical arch per discussion in
+where `$pkgsrcArch` is one of "multiarch" (the typical arch, per discussion in
 RFD 46), "i386", or "x86\_64"; and "$originVer" is the version of the origin
 image on which the triton-origin image is based.
 
 For example, a triton-origin image based on "minimal-multiarch-lts@15.4.1" will
 be "triton-origin-multiarch-15.4.1@1.2.3" (assuming "1.2.3" is the package.json
-version). See the "Naming and versioning" section in RFD for some justification.
+version). See the "Naming and versioning" section in RFD 46 for some
+justification.
 
 
 ### Building triton-origin images
 
-*First*, To build all the images and export them to Manta
+*First*, to build all the images and export them to Manta
 (at "/$tritonAccount/public/builds/triton-origin-image/$branch-$timestamp/"):
 
     make clean all
@@ -178,10 +183,12 @@ There is an assumption that this Triton DataCenter has an associated Manta
 currently, that **this is the production Manta in us-east
 <https://us-east.manta.joyent.com>**. The latter is because of a limitation in
 CloudAPI that doesn't provide a programmatic way to get the Manta URL with which
-the DC is associated, if any.
+the DC's IMGAPI is associated, if any.
 
 The upload path in Manta roughly follows the pattern used for building Triton
-and Manta components. See <https://github.com/joyent/mountain-gorilla>.
+and Manta components. See <https://github.com/joyent/mountain-gorilla> and,
+for Joyent Engineering builds see
+`/Joyent_Dev/public/builds/triton-origin-image` in Joyent's us-east Manta.
 
 
 *Then*, publish the built images to <https://updates.joyent.com>:
@@ -197,15 +204,15 @@ they will be published to the "experimental" channel of updates.jo.
 ### Releasing triton-origin images
 
 The steps above will build and publish new triton-origin images to the "dev"
-channel of updates.jo. A Triton component, say VMAPI, *could* use that new
-triton-origin image in the "dev" channel. However, we would rather have a
+channel of updates.joyent.com. A Triton component, say VMAPI, *could* use that
+new triton-origin image in the "dev" channel. However, we would rather have a
 controlled process where there is an explicit manual step to release new
 triton-origin images. Benefits:
 
 - We hopefully **reduce the number of active triton-origin images in use**. In
   the extreme, if every Triton component used a different triton-origin image,
   we could lose the space benefits on the USB key and on zpools for deployment.
-- We use this explicit process to **publish new triton-origin images to
+- We use this opportunity to **also publish the new triton-origin images to
   images.joyent.com and to the Triton Public Cloud**. These triton-origin images
   are necessary for non-Joyent users (who don't have direct access to our
   CI system) to [build Triton components
@@ -243,12 +250,15 @@ How to release a new set of triton-origin images:
         updates-imgadm -C dev channel-add release $imageUuids
         updates-imgadm -C dev channel-add support $imageUuids
 
+    (Dev Note: One might hit TOOLS-1733 while doing this.)
+
 4. Publish the images to <https://images.joyent.com>: This is a first step in
    getting them available for non-Joyent users to build Triton components
    themselves.
 
    TODO: provide a tool to do this. For now you need to download each from
-   updates.jo and then use `joyent-imgadm` to publish them to images.jo.
+   updates.jo, tweak `public: true` in the manifest, and then use
+   `joyent-imgadm` to publish them to images.jo.
 
 5. Open a CM ticket to have the new triton-origin images get imported into
    the TPC datacenters.
@@ -261,7 +271,7 @@ The 16.4.x generation of base/minimal images has issue DATASET-1297
 20161108T160947Z"), which is a blocker for triton-origin usage. JoshW mentions
 that to use these we could run them through the deholer.
 
-### Limitation: hardcode "mantaUrl"
+### Limitation: hardcoded "mantaUrl"
 
 Currently there is no good way to infer the linked `MANTA_URL` for a given
 Triton CLI profile (aka CloudAPI). It would be nice to have that on the
