@@ -2,6 +2,8 @@
 
 ## not yet released
 
+(nothing yet)
+
 ## 1.0.1
 
 - Bump the included pkgsrc curl from "curl-7.47.1" to "curl-7.51.0".

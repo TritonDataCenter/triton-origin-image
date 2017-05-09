@@ -54,9 +54,6 @@ build/image-0-stamp: build/buildinfo.json images.json
 publish: build/buildinfo.json
 	./tools/publish-images.sh -b build/buildinfo.json
 
-.PHONY: check
-check:
-	@echo "check ok"
 
 .PHONY: clean
 clean:
@@ -65,3 +62,27 @@ clean:
 .PHONY: distclean
 distclean: clean
 	rm -rf node_modules
+
+.PHONY: check
+check:: check-version
+	@echo "check ok"
+
+# Ensure CHANGES.md and package.json have the same version.
+.PHONY: check-version
+check-version:
+	@echo version is: $(shell cat package.json | json version)
+	[[ `cat package.json | json version` == `grep '^## ' CHANGES.md | head -2 | tail -1 | awk '{print $$2}'` ]]
+
+# This repo doesn't publish to npm, so a 'release' is just a tag.
+.PHONY: cutarelease
+cutarelease: check-version
+	[[ -z `git status --short` ]]  # If this fails, the working dir is dirty.
+	@which json 2>/dev/null 1>/dev/null && \
+	    ver=$(shell json -f package.json version) && \
+	    echo "** Are you sure you want to tag v$$ver?" && \
+	    echo "** Enter to continue, Ctrl+C to abort." && \
+	    read
+	ver=$(shell cat package.json | json version) && \
+	    date=$(shell date -u "+%Y-%m-%d") && \
+	    git tag -a "v$$ver" -m "version $$ver ($$date)" && \
+	    git push --tags origin
