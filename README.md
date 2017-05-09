@@ -140,7 +140,8 @@ for details.
 The triton-origin images to be built are defined in
 [images.json](./images.json). This set should remain small to avoid having a
 large number of origin images in play that can increase the size of the Triton
-headnode build on the USB key; and to avoid testing/maintenance surface area.
+headnode build on the USB key; and to avoid a large testing/maintenance surface
+area.
 
 The active set of triton-origin images is defined by the Triton/Manta
 components' `image_uuid` UUID value in [MG's

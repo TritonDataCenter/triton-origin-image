@@ -213,7 +213,7 @@ mput -f $buildinfoFile -H 'content-type: application/json' \
 #   proto instance was deployed.
 # - Set owner to the "not set" UUID (see IMGAPI-408), as is done by
 #   updates.joyent.com itself on import.
-imgmanifestName=$(mls $mantaUploadDir | grep '\.imgmanifest')
+imgmanifestName=$(mls $mantaUploadDir | grep '\.imgmanifest$')
 mget -o build/$imgmanifestName $mantaUploadDir/$imgmanifestName
 json -f build/$imgmanifestName -I \
     -e "this.requirements.min_platform['7.0'] = '$originMinPlatform'" \
