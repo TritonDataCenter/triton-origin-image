@@ -1,0 +1,19 @@
+[
+    {
+        "namePrefix": "triton-origin-multiarch",
+        "desc": "Triton/Manta component origin image based on multiarch 15.4.x",
+        "origin": {
+            "uuid": "ede31770-e19c-11e5-bb6e-3b7de3cca9ce",
+            "name": "minimal-multiarch-lts",
+            "version": "15.4.1"
+        },
+        "pkgsrc": [
+            "coreutils-8.23nb2",
+            "curl-7.51.0",
+            "gsed-4.2.2nb4",
+            "patch-2.7.5",
+            "sudo-1.8.15"
+        ],
+        "protoMinMemoryMb": "1024"
+    }
+]
