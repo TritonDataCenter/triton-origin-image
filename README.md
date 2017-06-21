@@ -202,13 +202,40 @@ the images will be published to the "dev" channel of updates.jo. Otherwise,
 they will be published to the "experimental" channel of updates.jo.
 
 
+### Releasing triton-origin images for testing
+
+[Currently](https://github.com/joyent/mountain-gorilla/blob/53f3f76e4dda86e48dbfd07c61faee9814626b2a/tools/prep_dataset_in_jpc.sh#L45),
+core component image creation is done in us-east-3. This means that to build
+a core component with new unreleased triton-origin image requires manually
+importing that image to us-east-3 and making it available to, at least,
+the `Joyent_Dev` account that is currently used for CI builds.
+
+For example:
+
+    ssh us-east-3
+
+    theImage=$(updates-imgadm -C dev list \
+        name=triton-origin-multiarch-15.4.1 --latest -H -o uuid)
+    joyentDev=$(sdc-useradm get Joyent_Dev | json uuid)
+
+    sdc-imgadm import $theImage -S https://updates.joyent.com
+    sdc-imgadm add-acl $theImage $joyentDev
+
+Skipping this step will result in a failed Jenkins CI build that looks like
+this:
+
+    ./tools/prep_dataset_in_jpc.sh:226: sdc-createmachine --dataset 04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f --package 14b0351e-d0f8-11e5-8a78-9fb74f9e7bc3 --tag MG_IMAGE_BUILD=true --name TEMP-vmapi-1494370819
+    sdc-createmachine: error (ResourceNotFound): image 04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f not found
+    ...
+    prep_dataset_in_jpc.sh: error: cannot get uuid for new VM.
+
+
 ### Releasing triton-origin images
 
-The steps above will build and publish new triton-origin images to the "dev"
-channel of updates.joyent.com. A Triton component, say VMAPI, *could* use that
-new triton-origin image in the "dev" channel. However, we would rather have a
-controlled process where there is an explicit manual step to release new
-triton-origin images. Benefits:
+Fully releasing triton-origin images for core component bi-weekly releases
+(i.e. for images that make it to the updates.joyent.com "release" channel) and
+for public usage (e.g. per Triton developer guide documentation) is a manual
+process. Benefits of this being manual:
 
 - We hopefully **reduce the number of active triton-origin images in use**. In
   the extreme, if every Triton component used a different triton-origin image,
@@ -241,14 +268,15 @@ How to release a new set of triton-origin images:
    step 1.
 
 3. Add those images to all of the "release" (required for Triton releases),
-   "staging" (required for the Triton release process), and "support"
-   (required eventually when Support takes release images) channels of
-   updates.joyent.com:
+   "staging" (required for the Triton release process), "experimental" (needed
+   for feature-branch builds of components), and "support" (required eventually
+   when Support takes release images) channels of updates.joyent.com:
 
         imageUuids=$(updates-imgadm -C dev list -H -o uuid --latest \
             name=~triton-origin- version=$(json -f package.json version) | xargs)
         updates-imgadm -C dev channel-add staging $imageUuids
         updates-imgadm -C dev channel-add release $imageUuids
+        updates-imgadm -C dev channel-add experimental $imageUuids
         updates-imgadm -C dev channel-add support $imageUuids
 
     (Dev Note: One might hit TOOLS-1733 while doing this.)
