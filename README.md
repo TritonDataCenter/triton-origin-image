@@ -43,7 +43,7 @@ to using a triton-origin image.
 
     For example:
 
-        $ updates-imgadm -C release list --latest name=~triton-origin- version=1.0.0
+        $ updates-imgadm -C release list --latest name=~triton-origin-
         UUID                                  NAME                            VERSION  FLAGS  OS       PUBLISHED
         e24bd5b7-f06b-4d6a-84f1-45c0b342e4d2  triton-origin-multiarch-15.4.1  1.0.0    I      smartos  2017-05-02T06:42:18Z
 
@@ -143,14 +143,12 @@ large number of origin images in play that can increase the size of the Triton
 headnode build on the USB key; and to avoid a large testing/maintenance surface
 area.
 
-The active set of triton-origin images is defined by the Triton/Manta
-components' `image_uuid` UUID value in [MG's
-targets.json.in](https://github.com/joyent/mountain-gorilla/blob/master/targets.json.in).
+The active set of triton-origin images is defined by which of them is being
+used by any current Triton/Manta component images. Currently that is the
+set of `image_uuid` UUID values in [MG's
+targets.json.in](https://github.com/joyent/mountain-gorilla/blob/master/targets.json.in),
+e.g.: <https://github.com/joyent/mountain-gorilla/blob/37a58ef3c5/targets.json.in#L162-L163>.
 Those UUIDs refer to origin images published to <https://updates.joyent.com>.
-
-For Joyent Engineering, the "triton-origin-image" Jenkins job handles building
-triton-origin images for pushes to "master". The "Releasing ..." step is still
-manual.
 
 
 ### Naming and versioning
@@ -172,6 +170,10 @@ justification.
 
 ### Building triton-origin images
 
+For Joyent Engineering, the "triton-origin-image" Jenkins job handles building
+triton-origin images for pushes to "master". However, you can build them
+directly as follows.
+
 *First*, to build all the images and export them to Manta
 (at "/$tritonAccount/public/builds/triton-origin-image/$branch-$timestamp/"):
 
@@ -186,27 +188,27 @@ currently, that **this is the production Manta in us-east
 CloudAPI that doesn't provide a programmatic way to get the Manta URL with which
 the DC's IMGAPI is associated, if any.
 
-The upload path in Manta roughly follows the pattern used for building Triton
-and Manta components. See <https://github.com/joyent/mountain-gorilla> and,
-for Joyent Engineering builds see
-`/Joyent_Dev/public/builds/triton-origin-image` in Joyent's us-east Manta.
+(Note: The upload path in Manta roughly follows the pattern used for building
+Triton and Manta components. See <https://github.com/joyent/mountain-gorilla>
+and, for Joyent Engineering builds see
+`/Joyent_Dev/public/builds/triton-origin-image` in Joyent's us-east Manta.)
 
 
-*Then*, publish the built images to <https://updates.joyent.com>:
+*Second*, publish the built images to <https://updates.joyent.com>:
 
     make publish
 
 This will use **your current `UPDATES_IMGADM_*` settings**, which requires you
 to have publish credentials to updates.jo. If this is the "master" branch, then
-the images will be published to the "dev" channel of updates.jo. Otherwise,
-they will be published to the "experimental" channel of updates.jo.
+the images will be published to the "dev" channel of updates.jo. Otherwise, they
+will be published to the "experimental" channel of updates.jo.
 
 
-### Releasing triton-origin images for testing
+### Testing a new triton-origin image
 
 [Currently](https://github.com/joyent/mountain-gorilla/blob/53f3f76e4dda86e48dbfd07c61faee9814626b2a/tools/prep_dataset_in_jpc.sh#L45),
 core component image creation is done in us-east-3. This means that to build
-a core component with new unreleased triton-origin image requires manually
+a core component with a new unreleased triton-origin image requires manually
 importing that image to us-east-3 and making it available to, at least,
 the `Joyent_Dev` account that is currently used for CI builds.
 
@@ -221,8 +223,39 @@ For example:
     sdc-imgadm import $theImage -S https://updates.joyent.com
     sdc-imgadm add-acl $theImage $joyentDev
 
-Skipping this step will result in a failed Jenkins CI build that looks like
-this:
+Once you have done this, you should be able to get a build -- of, say,
+"amonredis" -- as follows (instructions are for Joyent developers with access
+to our CI system):
+
+1. Create a feature branch (e.g. "FOO-123") of [MG](https://github.com/joyent/mountain-gorilla)
+   changing amonredis's `image_uuid` to your new image:
+
+        --- a/targets.json.in
+        +++ b/targets.json.in
+        @@ -298,8 +298,8 @@ cat <<EOF
+             "image_name": "amonredis",
+             "image_description": "SDC Amon Redis",
+             "image_version": "1.0.0",
+        -    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+        -    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
+        +    "// image_uuid": "triton-origin-multiarch-18.1.0@1.1.0",
+        +    "image_uuid": "$theImage",
+             "pkgsrc": [],
+             "repos": [
+               {"url": "git@github.com:joyent/sdc-amonredis.git"}
+
+2. Push that feature branch to GitHub.
+
+3. Do a [build of "amonredis"](https://jenkins.joyent.us/job/amonredis/)
+   setting `TRY_BRANCH` to your feature branch name, e.g. `TRY_BRANCH=FOO-123`.
+
+When that build completes, there will be a new image build in the "experimental"
+channel of updates.joyent.com, e.g.:
+
+    updates-imgadm -C experimental list name=amonredis
+
+If you forget to step to make the triton-origin image accessible to `Joyent_Dev`
+in us-east-3, then you will see a build error something like this:
 
     ./tools/prep_dataset_in_jpc.sh:226: sdc-createmachine --dataset 04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f --package 14b0351e-d0f8-11e5-8a78-9fb74f9e7bc3 --tag MG_IMAGE_BUILD=true --name TEMP-vmapi-1494370819
     sdc-createmachine: error (ResourceNotFound): image 04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f not found
@@ -232,10 +265,10 @@ this:
 
 ### Releasing triton-origin images
 
-Fully releasing triton-origin images for core component bi-weekly releases
-(i.e. for images that make it to the updates.joyent.com "release" channel) and
-for public usage (e.g. per Triton developer guide documentation) is a manual
-process. Benefits of this being manual:
+Fully releasing triton-origin images for Triton and Manta releases (i.e., for
+images that make it to the updates.joyent.com "release" channel) and for public
+usage (e.g. per Triton developer guide documentation) is a manual process.
+Benefits of this being manual:
 
 - We hopefully **reduce the number of active triton-origin images in use**. In
   the extreme, if every Triton component used a different triton-origin image,
@@ -291,6 +324,20 @@ How to release a new set of triton-origin images:
 
 5. Open a CM ticket to have the new triton-origin images get imported into
    the TPC datacenters.
+
+6. If this is a new triton origin name (e.g. adding a triton-origin image
+   based on a new minimal image -- new pkgsrc arch or new pkgsrc version), then
+   a few extra things are required:
+
+   - Add entries to the "compatibility" tables in the "sdcnode compatibility
+     with triton-origin images" and "Joyent Jenkins agent labels compatibility
+     with triton-origin images" sections above.
+   - Build and provision new Jenkins Agents to Joyent Engineering's CI system
+     for building core components on this image. See
+     <https://github.com/joyent/jenkins-agent> for details and speak to JoshW,
+     ChrisB, or Trent.
+   - Add sdcnode builds for this new image. See
+     <https://github.com/joyent/sdcnode> and speak to Trent.
 
 
 ### Warning: minimal 16.4.1
