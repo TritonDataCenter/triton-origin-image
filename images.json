@@ -15,5 +15,22 @@
             "sudo-1.8.15"
         ],
         "protoMinMemoryMb": "1024"
+    },
+    {
+        "namePrefix": "triton-origin-multiarch",
+        "desc": "Triton/Manta component origin image based on multiarch 18.1.0",
+        "origin": {
+            "uuid": "1ad363ec-3b83-11e8-8521-2f68a4a34d5d",
+            "name": "minimal-multiarch",
+            "version": "18.1.0"
+        },
+        "pkgsrc": [
+            "coreutils-8.26",
+            "curl-7.59.0",
+            "gsed-4.4",
+            "patch-2.7.6",
+            "sudo-1.8.22"
+        ],
+        "protoMinMemoryMb": "1024"
     }
 ]
