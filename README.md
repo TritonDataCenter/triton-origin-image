@@ -346,6 +346,19 @@ How to release a new set of triton-origin images:
    - Add sdcnode builds for this new image. See
      <https://github.com/joyent/sdcnode>.
 
+7. [eng.git](https://github.com/joyent/eng/) includes a script
+   `./tools/validate-buildenv.sh` which must be updated to include mappings for
+    the new origin image. After pushing changes to eng.git, any components which
+    are expected to use the new origin image will need their `deps/eng`
+    submodule to be updated.
+
+    These mappings are:
+      * `$PKGSRC_MAP`: the human-readable pkgsrc version (e.g. 2018Q1)
+      * `$SDC_MAP`: the human-readable name of the origin image
+        (e.g. triton-origin-multiarch-18.1.0@1.0.1)
+      * `$JENKINS_AGENT_MAP`: the corresponding jenkins-agent image uuid
+      * `$PKGSRC_PKGS_*``: the list of pkgsrc packages expected to be present on
+        the build machine
 
 ### Warning: minimal 16.4.1
 
