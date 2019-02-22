@@ -32,5 +32,22 @@
             "sudo-1.8.22"
         ],
         "protoMinMemoryMb": "1024"
+    },
+    {
+        "namePrefix": "triton-origin-x86_64",
+        "desc": "Triton/Manta component origin image based on x86_64 18.4.0",
+        "origin": {
+            "uuid": "c2c31b00-1d60-11e9-9a77-ff9f06554b0f",
+            "name": "minimal-64-lts",
+            "version": "18.4.0"
+        },
+        "pkgsrc": [
+            "coreutils-8.29nb1",
+            "curl-7.63.0nb1",
+            "gsed-4.6",
+            "patch-2.7.6nb1",
+            "sudo-1.8.26"
+        ],
+        "protoMinMemoryMb": "1024"
     }
 ]
