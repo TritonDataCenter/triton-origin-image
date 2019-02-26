@@ -1,19 +1,19 @@
-NAME=triton-origin-multiarch-15.4.1
+NAME=triton-origin-multiarch-18.1.0
 
 include ../../deps/eng/tools/mk/Makefile.defs
 TOP=$(shell git rev-parse --show-toplevel)
 MAKE_STAMPS_DIR=$(TOP)/make_stamps
 
-
 # not actually "building" anything for the image
 export ENGBLD_SKIP_VALIDATE_BUILDENV=true
 
-# minimal-multiarch-lts@15.4.1
-BASE_IMAGE_UUID = ede31770-e19c-11e5-bb6e-3b7de3cca9ce
+# minimal-multiarch-lts@18.1.0
+BASE_IMAGE_UUID = 1ad363ec-3b83-11e8-8521-2f68a4a34d5d
 BUILDIMAGE_NAME = ${NAME}
-BUILDIMAGE_DESC = Triton/Manta component origin image based on multiarch 15.4.x
+BUILDIMAGE_DESC = Triton/Manta component origin image based on multiarch 18.1.0
 #AGENTS          = 
-BUILDIMAGE_PKGSRC = coreutils-8.23nb2 curl-7.51.0 gsed-4.2.2nb4 patch-2.7.5 sudo-1.8.15
+BUILDIMAGE_PKGSRC = coreutils-8.26 curl-7.59.0 gsed-4.4 patch-2.7.6 sudo-1.8.22
+
 #
 # The default image contents are set to $(TOP)/$(RELEASE_TARBALL)
 # in Makefile.targ. To override those, set $(BUILDIMAGE_PKG) to the
@@ -21,7 +21,6 @@ BUILDIMAGE_PKGSRC = coreutils-8.23nb2 curl-7.51.0 gsed-4.2.2nb4 patch-2.7.5 sudo
 #
 BUILDIMAGE_PKG=$(TOP)/empty.tar.gz
 #
-
 
 include ../..//deps/eng/tools/mk/Makefile.targ
 

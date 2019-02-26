@@ -4,9 +4,19 @@
 # Makefile for triton-origin-image
 #
 
+
+NAME=triton-origin-image
+ENGBLD_REQUIRE	:= $(shell git submodule update --init deps/eng)
+include ./deps/eng/tools/mk/Makefile.defs
+TOP ?= $(error Unable to access eng.git submodule Makefiles.)
+
+CLEAN_FILES += ./build
+DIST_CLEAN_FILES += ./node_modules/ ./build
 NPM = npm
 JSON = ./node_modules/.bin/json
 
+
+# TODO: just include
 # Gather build info (based on
 # https://github.com/joyent/eng/blob/master/tools/mk/Makefile.defs#L34-L48)
 _AWK := $(shell (which gawk >/dev/null && echo gawk) \
@@ -55,14 +65,6 @@ publish: build/buildinfo.json
 	./tools/publish-images.sh -b build/buildinfo.json
 
 
-.PHONY: clean
-clean:
-	rm -rf build
-
-.PHONY: distclean
-distclean: clean
-	rm -rf node_modules
-
 .PHONY: check
 check:: check-version
 	@echo "check ok"
@@ -86,3 +88,19 @@ cutarelease: check-version
 	    date=$(shell date -u "+%Y-%m-%d") && \
 	    git tag -a "v$$ver" -m "version $$ver ($$date)" && \
 	    git push --tags origin
+
+
+
+#.PHONY: all-images
+#all-images: triton-origin-multiarch-15.4.1
+
+
+.PHONY: buildimage-all
+buildimage-all:
+	cd images/triton-origin-multiarch-15.4.1 && $(MAKE) buildimage
+	cd images/triton-origin-multiarch-15.4.1 && $(MAKE) buildimage
+
+
+
+
+include ./deps/eng/tools/mk/Makefile.targ
