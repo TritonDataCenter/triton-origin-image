@@ -7,17 +7,16 @@
 # Copyright 2019 Joyent, Inc.
 #
 
-NAME=triton-origin-multiarch-15.4.1
+NAME=triton-origin-x86_64-18.4.0
 TOP=$(shell git rev-parse --show-toplevel)
 
 include $(TOP)/Makefile.origin.defs
 include $(TOP)/deps/eng/tools/mk/Makefile.defs
 
-# minimal-multiarch-lts@15.4.1
-BASE_IMAGE_UUID = ede31770-e19c-11e5-bb6e-3b7de3cca9ce
+# minimal-64-lts@18.4.0
+BASE_IMAGE_UUID = c2c31b00-1d60-11e9-9a77-ff9f06554b0f
 BUILDIMAGE_NAME = ${NAME}
-BUILDIMAGE_DESC = Triton/Manta component origin image based on multiarch 15.4.x
-BUILDIMAGE_PKGSRC = coreutils-8.23nb2 curl-7.51.0 gsed-4.2.2nb4 patch-2.7.5 sudo-1.8.15
+BUILDIMAGE_DESC = Triton/Manta component origin image based on x86_64 18.4.x
+BUILDIMAGE_PKGSRC = coreutils curl gsed patch sudo
 
 include $(TOP)/deps/eng/tools/mk/Makefile.targ
-

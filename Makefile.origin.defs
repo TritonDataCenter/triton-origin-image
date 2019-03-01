@@ -1,0 +1,33 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+#
+# Copyright 2019 Joyent, Inc.
+#
+
+MAKE_STAMPS_DIR:=$(TOP)/make_stamps
+GITHASH := $(shell git log -1 --pretty='%H')
+ORIGIN_VERSION=$(shell cat $(TOP)/package.json | json version)
+
+# not actually "building" anything
+export ENGBLD_SKIP_VALIDATE_BUILDENV:=true
+
+BUILDIMAGE_PKG=$(TOP)/empty.tar.gz
+BUILDIMAGE_VERSION = $(ORIGIN_VERSION).$(TIMESTAMP)
+
+BUILDIMAGE_MF           = \
+    {"name": "$(BUILDIMAGE_NAME)",\
+    "description": "$(BUILDIMAGE_DESC)",\
+    "version": "$(BUILDIMAGE_VERSION)",\
+	"homepage": "https://github.com/joyent/triton-origin-image",\
+    "tags": {\
+      "branch": "$(BRANCH)",\
+      "timestamp": "$(TIMESTAMP)",\
+      "git": "$(GITHASH)"\
+    }\
+    }
+
+
+

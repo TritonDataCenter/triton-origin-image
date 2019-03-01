@@ -1,5 +1,12 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# Copyright (c) 2017, Joyent, Inc.
+
+#
+# Copyright 2019 Joyent, Inc.
+#
+
 #
 # Makefile for triton-origin-image
 #
@@ -15,20 +22,6 @@ DIST_CLEAN_FILES += ./node_modules/ ./build
 NPM = npm
 JSON = ./node_modules/.bin/json
 
-
-# TODO: just include
-# Gather build info (based on
-# https://github.com/joyent/eng/blob/master/tools/mk/Makefile.defs#L34-L48)
-_AWK := $(shell (which gawk >/dev/null && echo gawk) \
-	|| (which nawk >/dev/null && echo nawk) \
-	|| echo awk)
-BRANCH := $(shell git symbolic-ref HEAD | $(_AWK) -F/ '{print $$3}')
-ifeq ($(TIMESTAMP),)
-	TIMESTAMP := $(shell date -u "+%Y%m%dT%H%M%SZ")
-endif
-GITHASH := $(shell git log -1 --pretty='%H')
-
-
 #
 # Targets
 #
@@ -38,17 +31,6 @@ all: build/buildinfo.json build/image-0-stamp
 
 $(JSON):
 	$(NPM) install
-
-build/buildinfo.json: | $(JSON)
-	mkdir -p build/
-	echo '{}' \
-		| $(JSON) -e "this.branch='$(BRANCH)'" \
-			-e "this.timestamp='$(TIMESTAMP)'" \
-			-e "this.git='$(GITHASH)'" \
-		> $@
-
-.PHONY: buildinfo
-buildinfo: build/buildinfo.json
 
 .PHONY: images
 images: build/image-0-stamp
@@ -90,17 +72,11 @@ cutarelease: check-version
 	    git push --tags origin
 
 
-
-#.PHONY: all-images
-#all-images: triton-origin-multiarch-15.4.1
-
-
 .PHONY: buildimage-all
 buildimage-all:
 	cd images/triton-origin-multiarch-15.4.1 && $(MAKE) buildimage
-	cd images/triton-origin-multiarch-15.4.1 && $(MAKE) buildimage
-
-
+	cd images/triton-origin-multiarch-18.1.0 && $(MAKE) buildimage
+	cd images/triton-origin-x86_64-18.4.0 && $(MAKE) buildimage
 
 
 include ./deps/eng/tools/mk/Makefile.targ
