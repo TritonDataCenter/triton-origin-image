@@ -157,6 +157,29 @@ e.g.: <https://github.com/joyent/mountain-gorilla/blob/37a58ef3c5/targets.json.i
 Those UUIDs refer to origin images published to <https://updates.joyent.com>.
 
 
+### Prerequisite Chains
+
+An intended invariant of an image repository (such as updates.joyent.com) is
+that the full origin chain of images for any image in that repository are also
+contained within the same repository (and in the same channel).  That means the
+image that an triton-origin image is "based on" (the origin of the origin) must
+be imported into updates.joyent.com from images.joyent.com.  The would typically
+by a base minimal image.
+
+NOTE: Because updates.joyent.com is a "standalone" imgapi instance, it does not
+support the `-S` flag to `import`.
+
+0. Use an updates.joyent.com operator account.
+1. Locally download the manifest and file of the desired image from
+   images.joyent.com (`joyent-imgadm get` and `joyent-imgadm get-file`).
+2. Edit the manifst to set `public: false` (updates.joyent.com is a "private
+   Images API" and disallows public images).
+3. Import the image ex: `./bin/updates-imgadm import -m foo.m -f foo.file`
+4. Use `updates-imgadm channel-add` to add the image to the `dev` and
+   `experimental` channel if it is not already.
+5. Before the image can be used in any released images, it must also be added to
+   the remaining channels (`updates-imgadm channels`).
+
 ### Naming and versioning
 
 Triton-origin images are named and versioned as follows:
