@@ -16,8 +16,6 @@ ENGBLD_USE_BUILDIMAGE:=true
 # not actually "building" anything
 export ENGBLD_SKIP_VALIDATE_BUILDENV:=true
 
-# move to individual
-#BUILDIMAGE_DO_PKGSRC_UPGRADE:=true
 BUILDIMAGE_PKG=$(TOP)/empty.tar.gz
 BUILDIMAGE_VERSION = $(ORIGIN_VERSION).$(TIMESTAMP)
 

@@ -13,7 +13,7 @@ TOP=$(shell git rev-parse --show-toplevel)
 include $(TOP)/Makefile.origin.defs
 include $(TOP)/deps/eng/tools/mk/Makefile.defs
 
-# minimal-multiarch-lts@18.1.0
+# minimal-multiarch@18.1.0
 BASE_IMAGE_UUID = 1ad363ec-3b83-11e8-8521-2f68a4a34d5d
 BUILDIMAGE_NAME = ${NAME}
 BUILDIMAGE_DESC = Triton/Manta component origin image based on multiarch 18.1.0
