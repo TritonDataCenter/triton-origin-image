@@ -72,11 +72,11 @@ cutarelease: check-version
 	    git push --tags origin
 
 
-.PHONY: buildimage-all
-buildimage-all:
-	cd images/triton-origin-multiarch-15.4.1 && $(MAKE) buildimage
-	cd images/triton-origin-multiarch-18.1.0 && $(MAKE) buildimage
-	cd images/triton-origin-x86_64-18.4.0 && $(MAKE) buildimage
+all-%:
+	@echo '$*'
+	cd images/triton-origin-multiarch-15.4.1 && $(MAKE) $*
+	cd images/triton-origin-multiarch-18.1.0 && $(MAKE) $*
+	cd images/triton-origin-x86_64-18.4.0 && $(MAKE) $*
 
 
 include ./deps/eng/tools/mk/Makefile.targ
