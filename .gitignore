@@ -2,3 +2,5 @@
 /tmp
 /build
 /npm-debug.log
+/make_stamps
+/bits
