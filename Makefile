@@ -18,7 +18,7 @@ include ./deps/eng/tools/mk/Makefile.defs
 TOP ?= $(error Unable to access eng.git submodule Makefiles.)
 
 CLEAN_FILES += ./build
-DIST_CLEAN_FILES += ./node_modules/ ./build
+DIST_CLEAN_FILES += ./node_modules/ ./build ./bits
 NPM = npm
 JSON = ./node_modules/.bin/json
 
