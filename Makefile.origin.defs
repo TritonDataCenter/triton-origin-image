@@ -10,7 +10,7 @@
 ENGBLD_REQUIRE := $(shell git submodule update --init deps/eng)
 MAKE_STAMPS_DIR:=$(TOP)/make_stamps
 GITHASH := $(shell git log -1 --pretty='%H')
-ORIGIN_VERSION=$(shell cat $(TOP)/package.json | json version)
+ORIGIN_VERSION=$(shell cat $(TOP)/package.json | json version | cut -d '.' -f 1-2)
 ENGBLD_USE_BUILDIMAGE:=true
 
 # not actually "building" anything
