@@ -1,71 +1,36 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# Copyright (c) 2017, Joyent, Inc.
+
+#
+# Copyright 2019 Joyent, Inc.
+#
+
 #
 # Makefile for triton-origin-image
 #
 
+
+NAME=triton-origin-image
+ENGBLD_REQUIRE	:= $(shell git submodule update --init deps/eng)
+include ./deps/eng/tools/mk/Makefile.defs
+TOP ?= $(error Unable to access eng.git submodule Makefiles.)
+
+CLEAN_FILES += ./build
+DIST_CLEAN_FILES += ./node_modules/ ./build ./bits
 NPM = npm
 JSON = ./node_modules/.bin/json
-
-# Gather build info (based on
-# https://github.com/joyent/eng/blob/master/tools/mk/Makefile.defs#L34-L48)
-_AWK := $(shell (which gawk >/dev/null && echo gawk) \
-	|| (which nawk >/dev/null && echo nawk) \
-	|| echo awk)
-BRANCH := $(shell git symbolic-ref HEAD | $(_AWK) -F/ '{print $$3}')
-ifeq ($(TIMESTAMP),)
-	TIMESTAMP := $(shell date -u "+%Y%m%dT%H%M%SZ")
-endif
-GITHASH := $(shell git log -1 --pretty='%H')
-
 
 #
 # Targets
 #
 
-.PHONY: all
-all: build/buildinfo.json build/image-0-stamp
-
 $(JSON):
 	$(NPM) install
 
-build/buildinfo.json: | $(JSON)
-	mkdir -p build/
-	echo '{}' \
-		| $(JSON) -e "this.branch='$(BRANCH)'" \
-			-e "this.timestamp='$(TIMESTAMP)'" \
-			-e "this.git='$(GITHASH)'" \
-		> $@
-
-.PHONY: buildinfo
-buildinfo: build/buildinfo.json
-
-.PHONY: images
-images: build/image-0-stamp
-
-# Build all images spec'd in images.json and upload to Manta builds area,
-# e.g. /Joyent_Dev/public/builds/triton-origin-image/...
-build/image-0-stamp: build/buildinfo.json images.json
-	./tools/build-images.sh -b build/buildinfo.json -i images.json
-	touch $@
-
-# Publish the built images (identified via "buildinfo.json") to
-# updates.joyent.com.
-publish: build/buildinfo.json
-	./tools/publish-images.sh -b build/buildinfo.json
-
-
-.PHONY: clean
-clean:
-	rm -rf build
-
-.PHONY: distclean
-distclean: clean
-	rm -rf node_modules
-
 .PHONY: check
 check:: check-version
-	@echo "check ok"
 
 # Ensure CHANGES.md and package.json have the same version.
 .PHONY: check-version
@@ -86,3 +51,31 @@ cutarelease: check-version
 	    date=$(shell date -u "+%Y-%m-%d") && \
 	    git tag -a "v$$ver" -m "version $$ver ($$date)" && \
 	    git push --tags origin
+
+#
+# Convenience wrappers to run targets for each image without invoking cd yourself
+#
+triton-origin-multiarch-15.4.1-%:
+	@echo '$*'
+	cd images/triton-origin-multiarch-15.4.1 && $(MAKE) $*
+
+triton-origin-multiarch-18.1.0-%:
+	@echo '$*'
+	cd images/triton-origin-multiarch-18.1.0 && $(MAKE) $*
+
+triton-origin-x86_64-18.4.0-%:
+	@echo '$*'
+	cd images/triton-origin-x86_64-18.4.0 && $(MAKE) $*
+
+
+#
+# Convenience wrapper to run the same target for each image
+#
+all-%:
+	@echo '$*'
+	cd images/triton-origin-multiarch-15.4.1 && $(MAKE) $*
+	cd images/triton-origin-multiarch-18.1.0 && $(MAKE) $*
+	cd images/triton-origin-x86_64-18.4.0 && $(MAKE) $*
+
+
+include ./deps/eng/tools/mk/Makefile.targ

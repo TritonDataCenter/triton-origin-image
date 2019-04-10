@@ -1,0 +1,34 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+#
+# Copyright 2019 Joyent, Inc.
+#
+
+
+# Definitions (or overrides) for variables defined in the "eng" Makefiles
+ENGBLD_REQUIRE := $(shell git submodule update --init $(TOP)/deps/eng)
+MAKE_STAMPS_DIR:=$(TOP)/make_stamps
+GITHASH := $(shell git log -1 --pretty='%H')
+ENGBLD_USE_BUILDIMAGE:=true
+
+# not actually "building" anything
+export ENGBLD_SKIP_VALIDATE_BUILDENV:=true
+
+# BUILDIMAGE_PKG is required by engbld, but there is nothing to "build" so we
+# pass along this empty tarball
+BUILDIMAGE_PKG=$(TOP)/empty.tar.gz
+
+BUILDIMAGE_MF           = \
+    {"name": "$(BUILDIMAGE_NAME)",\
+    "description": "$(BUILDIMAGE_DESC)",\
+    "version": "$(BUILDIMAGE_VERSION)",\
+    "homepage": "https://github.com/joyent/triton-origin-image",\
+    "tags": {\
+      "branch": "$(BRANCH)",\
+      "timestamp": "$(TIMESTAMP)",\
+      "git": "$(GITHASH)"\
+    }\
+    }
