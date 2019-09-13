@@ -108,7 +108,6 @@ files. We will try to keep this table up to date:
 | triton-origin-x86\_64-18.4.0   | minimal-64-lts@18.4.0        | minimal-64-lts@18.4.0            | c2c31b00-1d60-11e9-9a77-ff9f06554b0f |
 | triton-origin-multiarch-18.1.0 | minimal-multiarch@18.1.0     | minimal-multiarch@18.1.0         | 1ad363ec-3b83-11e8-8521-2f68a4a34d5d |
 | triton-origin-multiarch-15.4.1 | minimal-multiarch-lts@15.4.1 | sdc-minimal-multiarch-lts@15.4.1 | 18b094b0-eb01-11e5-80c1-175dac7ddf02 |
-| -                              | -                            | sdc-base@14.2.0                  | de411e86-548d-11e4-a4b7-3bb60478632a |
 | -                              | -                            | sdc-smartos@1.6.3                | fd2cc906-8938-11e3-beab-4359c665ac99 |
 
 
