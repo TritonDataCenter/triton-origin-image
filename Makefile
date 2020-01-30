@@ -4,7 +4,7 @@
 #
 
 #
-# Copyright 2019 Joyent, Inc.
+# Copyright 2020 Joyent, Inc.
 #
 
 #
@@ -75,6 +75,10 @@ triton-origin-x86_64-19.2.0-%:
 	@echo '$*'
 	cd images/triton-origin-x86_64-19.2.0 && $(MAKE) $*
 
+triton-origin-x86_64-19.4.0-%:
+	@echo '$*'
+	cd images/triton-origin-x86_64-19.4.0 && $(MAKE) $*
+
 #
 # Convenience wrapper to run the same target for each image
 #
@@ -85,6 +89,7 @@ all-%:
 	cd images/triton-origin-x86_64-18.4.0 && $(MAKE) $*
 	cd images/triton-origin-x86_64-19.1.0 && $(MAKE) $*
 	cd images/triton-origin-x86_64-19.2.0 && $(MAKE) $*
+	cd images/triton-origin-x86_64-19.4.0 && $(MAKE) $*
 
 
 
