@@ -74,9 +74,9 @@ export TRACE=1
 set -o errexit
 set -o pipefail
 make clean distclean
+export UPDATES_IMGADM_CHANNEL=experimental
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
-# XXX timf print-bits-upload to prevent modifying production data
-make print-BRANCH print-STAMP triton-origin-multiarch-15.4.1-"buildimage print-bits-upload"
+make print-BRANCH print-STAMP triton-origin-multiarch-15.4.1-"buildimage bits-upload"
 ''')
             }
         }
@@ -92,13 +92,14 @@ make print-BRANCH print-STAMP triton-origin-multiarch-15.4.1-"buildimage print-b
             }
             steps {
                 sh('''
-    export TRACE=1
+export TRACE=1
 
-    set -o errexit
-    set -o pipefail
-    make clean distclean
-    export ENGBLD_BITS_UPLOAD_IMGAPI=true
-    make print-BRANCH print-STAMP triton-origin-multiarch-18.1.0-"buildimage print-bits-upload"
+set -o errexit
+set -o pipefail
+make clean distclean
+export UPDATES_IMGADM_CHANNEL=experimental
+export ENGBLD_BITS_UPLOAD_IMGAPI=true
+make print-BRANCH print-STAMP triton-origin-multiarch-18.1.0-"buildimage bits-upload"
     ''')
             }
         }
@@ -119,9 +120,9 @@ export TRACE=1
 set -o errexit
 set -o pipefail
 make clean distclean
+export UPDATES_IMGADM_CHANNEL=experimental
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
-# XXX timf print-bits-upload to prevent modifying production data
-make print-BRANCH print-STAMP triton-origin-x86_64-18.4.0-"buildimage print-bits-upload"
+make print-BRANCH print-STAMP triton-origin-x86_64-18.4.0-"buildimage bits-upload"
 ''')
             }
         }
@@ -140,11 +141,10 @@ make print-BRANCH print-STAMP triton-origin-x86_64-18.4.0-"buildimage print-bits
 export TRACE=1
 set -o errexit
 set -o pipefail
-#export UPDATES_IMGADM_CHANNEL=experimental
 make clean distclean
+export UPDATES_IMGADM_CHANNEL=experimental
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
-# XXX timf print-bits-upload to prevent modifying production data
-make print-BRANCH print-STAMP triton-origin-x86_64-19.1.0-"buildimage print-bits-upload"
+make print-BRANCH print-STAMP triton-origin-x86_64-19.1.0-"buildimage bits-upload"
 ''')
             }
         }
@@ -163,11 +163,10 @@ make print-BRANCH print-STAMP triton-origin-x86_64-19.1.0-"buildimage print-bits
 export TRACE=1
 set -o errexit
 set -o pipefail
-#export UPDATES_IMGADM_CHANNEL=experimental
 make clean distclean
-#export ENGBLD_BITS_UPLOAD_IMGAPI=true
-# XXX timf print-bits-upload to prevent modifying production data
-make print-BRANCH print-STAMP triton-origin-x86_64-19.2.0-"buildimage print-bits-upload"
+export UPDATES_IMGADM_CHANNEL=experimental
+export ENGBLD_BITS_UPLOAD_IMGAPI=true
+make print-BRANCH print-STAMP triton-origin-x86_64-19.2.0-"buildimage bits-upload"
 ''')
             }
         }
@@ -186,11 +185,10 @@ make print-BRANCH print-STAMP triton-origin-x86_64-19.2.0-"buildimage print-bits
 export TRACE=1
 set -o errexit
 set -o pipefail
-#export UPDATES_IMGADM_CHANNEL=experimental
 make clean distclean
-#export ENGBLD_BITS_UPLOAD_IMGAPI=true
-# XXX timf print-bits-upload to prevent modifying production data
-make print-BRANCH print-STAMP triton-origin-x86_64-19.4.0-"buildimage print-bits-upload"
+export UPDATES_IMGADM_CHANNEL=experimental
+export ENGBLD_BITS_UPLOAD_IMGAPI=true
+make print-BRANCH print-STAMP triton-origin-x86_64-19.4.0-"buildimage bits-upload"
 ''')
             }
         }
