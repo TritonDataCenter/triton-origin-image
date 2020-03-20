@@ -89,9 +89,10 @@ to using a triton-origin image.
 
         NODE_PREBUILT_IMAGE=1ad363ec-3b83-11e8-8521-2f68a4a34d5d
 
-5. Update Jenkins (Joyent's current CI system) configuration for your
-   component's job to get an appropriate Jenkins Agent. Specifically the
-   "Label Expression" of the job configuration needs to be updated.
+5. Update Jenkinsfile to add a stage for the image you're building, taking care
+   to specify the correct `joyCommonLabels(..)` expression for your image,
+   adding a parameter to allow building of the individual image, and modifying
+   the `make` command line arguments for your pipeline stage.
    See the compatibility table below.
 
 
@@ -198,9 +199,11 @@ RFD 165 for later revisions.
 
 ### Building triton-origin images
 
-Official builds are done by the "triton-origin-image" Jenkins jobs.
+Official builds are done by the "triton-origin-image.git" Jenkins job. This job
+does not build automatically, and will only build the pipeline stages you
+select as parameters at build-time.
 
-You can build them on your workstation using the standard engbld targets (such
+You can build images on your workstation using the standard engbld targets (such
 as `buildimage` or `bits-upload`).  Because there are multiple origin images
 defined, there are a few different ways to invoke the targets.  Examples:
 
@@ -283,7 +286,7 @@ How to release a new triton-origin image:
    - Build and provision new Jenkins Agents to Joyent Engineering's CI system
      for building core components on this image. See
      <https://github.com/joyent/jenkins-agent> for details and speak to JoshW,
-     ChrisB, or Trent.
+     TimF, or Trent.
    - Add sdcnode builds for this new image. See
      <https://github.com/joyent/sdcnode>.
 
