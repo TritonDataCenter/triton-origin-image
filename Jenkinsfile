@@ -120,7 +120,6 @@ export TRACE=1
 set -o errexit
 set -o pipefail
 make clean distclean
-export UPDATES_IMGADM_CHANNEL=experimental
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
 make print-BRANCH print-STAMP triton-origin-x86_64-18.4.0-"buildimage bits-upload"
 ''')
@@ -142,7 +141,6 @@ export TRACE=1
 set -o errexit
 set -o pipefail
 make clean distclean
-export UPDATES_IMGADM_CHANNEL=experimental
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
 make print-BRANCH print-STAMP triton-origin-x86_64-19.1.0-"buildimage bits-upload"
 ''')
@@ -164,7 +162,6 @@ export TRACE=1
 set -o errexit
 set -o pipefail
 make clean distclean
-export UPDATES_IMGADM_CHANNEL=experimental
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
 make print-BRANCH print-STAMP triton-origin-x86_64-19.2.0-"buildimage bits-upload"
 ''')
@@ -186,7 +183,6 @@ export TRACE=1
 set -o errexit
 set -o pipefail
 make clean distclean
-export UPDATES_IMGADM_CHANNEL=experimental
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
 make print-BRANCH print-STAMP triton-origin-x86_64-19.4.0-"buildimage bits-upload"
 ''')
