@@ -74,7 +74,6 @@ export TRACE=1
 set -o errexit
 set -o pipefail
 make clean distclean
-export UPDATES_IMGADM_CHANNEL=experimental
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
 make print-BRANCH print-STAMP triton-origin-multiarch-15.4.1-"buildimage bits-upload"
 ''')
@@ -97,7 +96,6 @@ export TRACE=1
 set -o errexit
 set -o pipefail
 make clean distclean
-export UPDATES_IMGADM_CHANNEL=experimental
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
 make print-BRANCH print-STAMP triton-origin-multiarch-18.1.0-"buildimage bits-upload"
     ''')
