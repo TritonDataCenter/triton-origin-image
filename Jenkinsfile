@@ -38,18 +38,6 @@ pipeline {
                 'triton-origin-x86_64-18.4.0'
         )
         booleanParam(
-            name: 'BUILD_19_1_0',
-            defaultValue: false,
-            description: 'This parameter declares whether to build ' +
-                'triton-origin-x86_64-19.1.0'
-        )
-        booleanParam(
-            name: 'BUILD_19_2_0',
-            defaultValue: false,
-            description: 'This parameter declares whether to build ' +
-                'triton-origin-x86_64-19.2.0'
-        )
-        booleanParam(
             name: 'BUILD_19_4_0',
             defaultValue: false,
             description: 'This parameter declares whether to build ' +
@@ -120,48 +108,6 @@ set -o pipefail
 make clean distclean
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
 make print-BRANCH print-STAMP triton-origin-x86_64-18.4.0-"buildimage bits-upload"
-''')
-            }
-        }
-        stage('triton-origin-image-x86_64-19.1.0') {
-            agent {
-                node {
-                    label joyCommonLabels(image_ver: '19.1.0')
-                }
-            }
-            when {
-                beforeAgent true
-                environment name: 'BUILD_19_1_0', value: 'true'
-            }
-            steps {
-                sh('''
-export TRACE=1
-set -o errexit
-set -o pipefail
-make clean distclean
-export ENGBLD_BITS_UPLOAD_IMGAPI=true
-make print-BRANCH print-STAMP triton-origin-x86_64-19.1.0-"buildimage bits-upload"
-''')
-            }
-        }
-        stage('triton-origin-image-x86_64-19.2.0') {
-            agent {
-                node {
-                    label joyCommonLabels(image_ver: '19.2.0')
-                }
-            }
-            when {
-                beforeAgent true
-                environment name: 'BUILD_19_2_0', value: 'true'
-            }
-            steps {
-                sh('''
-export TRACE=1
-set -o errexit
-set -o pipefail
-make clean distclean
-export ENGBLD_BITS_UPLOAD_IMGAPI=true
-make print-BRANCH print-STAMP triton-origin-x86_64-19.2.0-"buildimage bits-upload"
 ''')
             }
         }
