@@ -26,12 +26,6 @@ pipeline {
                 'triton-origin-multiarch-15.4.1'
         )
         booleanParam(
-            name: 'BUILD_18_1_0',
-            defaultValue: false,
-            description: 'This parameter declares whether to build ' +
-                'triton-origin-multiarch-18.1.0'
-        )
-        booleanParam(
             name: 'BUILD_18_4_0',
             defaultValue: false,
             description: 'This parameter declares whether to build ' +
@@ -65,28 +59,6 @@ make clean distclean
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
 make print-BRANCH print-STAMP triton-origin-multiarch-15.4.1-"buildimage bits-upload"
 ''')
-            }
-        }
-        stage('triton-origin-multiarch-18.1.0') {
-            agent {
-                node {
-                    label joyCommonLabels(image_ver: '18.1.0')
-                }
-            }
-            when {
-                beforeAgent true
-                environment name: 'BUILD_18_1_0', value: 'true'
-            }
-            steps {
-                sh('''
-export TRACE=1
-
-set -o errexit
-set -o pipefail
-make clean distclean
-export ENGBLD_BITS_UPLOAD_IMGAPI=true
-make print-BRANCH print-STAMP triton-origin-multiarch-18.1.0-"buildimage bits-upload"
-    ''')
             }
         }
         stage('triton-origin-x86_64-18.4.0') {
