@@ -59,21 +59,9 @@ triton-origin-multiarch-15.4.1-%:
 	@echo '$*'
 	cd images/triton-origin-multiarch-15.4.1 && $(MAKE) $*
 
-triton-origin-multiarch-18.1.0-%:
-	@echo '$*'
-	cd images/triton-origin-multiarch-18.1.0 && $(MAKE) $*
-
 triton-origin-x86_64-18.4.0-%:
 	@echo '$*'
 	cd images/triton-origin-x86_64-18.4.0 && $(MAKE) $*
-
-triton-origin-x86_64-19.1.0-%:
-	@echo '$*'
-	cd images/triton-origin-x86_64-19.1.0 && $(MAKE) $*
-
-triton-origin-x86_64-19.2.0-%:
-	@echo '$*'
-	cd images/triton-origin-x86_64-19.2.0 && $(MAKE) $*
 
 triton-origin-x86_64-19.4.0-%:
 	@echo '$*'
@@ -85,10 +73,7 @@ triton-origin-x86_64-19.4.0-%:
 all-%:
 	@echo '$*'
 	cd images/triton-origin-multiarch-15.4.1 && $(MAKE) $*
-	cd images/triton-origin-multiarch-18.1.0 && $(MAKE) $*
 	cd images/triton-origin-x86_64-18.4.0 && $(MAKE) $*
-	cd images/triton-origin-x86_64-19.1.0 && $(MAKE) $*
-	cd images/triton-origin-x86_64-19.2.0 && $(MAKE) $*
 	cd images/triton-origin-x86_64-19.4.0 && $(MAKE) $*
 
 

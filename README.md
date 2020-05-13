@@ -19,8 +19,9 @@ origin images for all Triton and Manta VM components:
 ## tl;dr
 
 - This repo builds one or more "triton-origin-$pkgsrcArch-$originVer@$version"
-  images, e.g. "triton-origin-multiarch-18.1.0@1.0.1", and publishes them to
-  updates.joyent.com. (See the "Building triton-origin images" section below.)
+  images, e.g. "triton-origin-x86_64-19.4.0@master-20200130T200825Z-gbb45b8d",
+  and publishes them to updates.joyent.com. (See the "Building triton-origin
+  images" section below.)
 - After sanity testing, those images are "released" for use by Triton/Manta
   components. (See the "Releasing triton-origin images" section below.)
 - A Triton/Manta core component, say VMAPI, uses one of these images as the
@@ -43,13 +44,13 @@ to using a triton-origin image.
     For example:
 
         $ updates-imgadm -C release list --latest name=~triton-origin-
-        UUID                                  NAME                            VERSION  FLAGS  OS       PUBLISHED
-        04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f  triton-origin-multiarch-15.4.1  1.0.1    I      smartos  2017-05-09T22:06:48Z
-        b6ea7cb4-6b90-48c0-99e7-1d34c2895248  triton-origin-multiarch-18.1.0  1.0.1    I      smartos  2018-05-21T18:28:19Z
+        UUID                                  NAME                            VERSION                           FLAGS  OS       PUBLISHED
+        04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f  triton-origin-multiarch-15.4.1  1.0.1                             I      smartos  2017-05-09T22:06:48Z
+        59ba2e5e-976f-4e09-8aac-a4a7ef0395f5  triton-origin-x86_64-19.4.0     master-20200130T200825Z-gbb45b8d  I      smartos  2020-01-30T20:11:05Z
 
-    and choose the flavour you want.  The "18.1.0" refers to the
+    and choose the flavour you want.  The "19.4.0" refers to the
     "minimal-$arch-$version" origin image of the "triton-origin-\*" image.
-    Generally you should favour later versions -- "18.1.0" in this example.
+    Generally you should favour later versions -- "19.4.0" in this example.
 
 2. Update `BASE_IMAGE_UUID` in your component's `Makefile`.
 
@@ -67,12 +68,12 @@ to using a triton-origin image.
    currently do), then you may need to update `NODE_PREBUILT_` variables in
    your Makefile. You probably have a block like this:
 
-        NODE_PREBUILT_VERSION=v4.6.1
+        NODE_PREBUILT_VERSION=v8.17.0
         ifeq ($(shell uname -s),SunOS)
-            NODE_PREBUILT_TAG=zone
-            # This is minimal-multiarch@18.1.0, compat with
-            # triton-origin-multiarch-18.1.0.
-            NODE_PREBUILT_IMAGE=1ad363ec-3b83-11e8-8521-2f68a4a34d5d
+            NODE_PREBUILT_TAG=zone64
+            # This is minimal-64 19.4.0, compat with
+            # triton-origin-x86_64-19.4.0
+            NODE_PREBUILT_IMAGE=5417ab20-3156-11ea-8b19-2b66f5e7a439
         endif
 
     That `NODE_PREBUILT_IMAGE` value needs to be the image UUID of sdcnode
@@ -81,13 +82,13 @@ to using a triton-origin image.
     `$baseVersion` of the minimal/base origin image. Use the "sdcnode
     compatibility with triton-origin images" table and example below.
 
-    For example, say you are using "triton-origin-multiarch-18.1.0@1.0.1".
-    That is based on "minimal-multiarch@18.1.0".
-    From <https://download.joyent.com/pub/build/sdcnode/README.html> we see
-    that there are sdcnode builds for "minimal-multiarch@18.1.0":
-    1ad363ec-3b83-11e8-8521-2f68a4a34d5d". Therefore we want:
+    For example, say you are using "triton-origin-x86_64-19.4.0@master-20200130T200825Z-gbb45b8d".
+    That is based on "minimal-64-lts@19.4.0".
+    From <https://us-east.manta.joyent.com/Joyent_Dev/public/releng/sdcnode/README.html> we see
+    that there are sdcnode builds for "minimal-64-lts@19.4.0":
+    5417ab20-3156-11ea-8b19-2b66f5e7a439". Therefore we want:
 
-        NODE_PREBUILT_IMAGE=1ad363ec-3b83-11e8-8521-2f68a4a34d5d
+        NODE_PREBUILT_IMAGE=5417ab20-3156-11ea-8b19-2b66f5e7a439
 
 5. Update Jenkinsfile to add a stage for the image you're building, taking care
    to specify the correct `joyCommonLabels(..)` expression for your image,
@@ -106,10 +107,7 @@ files. We will try to keep this table up to date:
 | triton-origin image            | based on                     | sdcnode compatible build         | `NODE_PREBUILT_VERSION`              |
 | ------------------------------ | ---------------------------- | -------------------------------- | ------------------------------------ |
 | triton-origin-x86\_64-19.4.0   | minimal-64-lts@19.4.0        | minimal-64-lts@19.4.0            | 5417ab20-3156-11ea-8b19-2b66f5e7a439 |
-| triton-origin-x86\_64-19.2.0   | minimal-64@19.2.0            | minimal-64@19.2.0                | 7f4d80b4-9d70-11e9-9388-6b41834cbeeb |
-| triton-origin-x86\_64-19.1.0   | minimal-64@19.1.0            | minimal-64@19.1.0                | fbda7200-57e7-11e9-bb3a-8b0b548fcc37 |
 | triton-origin-x86\_64-18.4.0   | minimal-64-lts@18.4.0        | minimal-64-lts@18.4.0            | c2c31b00-1d60-11e9-9a77-ff9f06554b0f |
-| triton-origin-multiarch-18.1.0 | minimal-multiarch@18.1.0     | minimal-multiarch@18.1.0         | 1ad363ec-3b83-11e8-8521-2f68a4a34d5d |
 | triton-origin-multiarch-15.4.1 | minimal-multiarch-lts@15.4.1 | sdc-minimal-multiarch-lts@15.4.1 | 18b094b0-eb01-11e5-80c1-175dac7ddf02 |
 | -                              | -                            | sdc-smartos@1.6.3                | fd2cc906-8938-11e3-beab-4359c665ac99 |
 
@@ -129,10 +127,7 @@ files. We will try to keep this table up to date:
 | triton-origin image            | Jenkins agent labels                        |
 | ------------------------------ | ------------------------------------------- |
 | triton-origin-x86\_64-19.4.0   | `image_ver:19.4.0 && pkgsrc_arch:x86_64`    |
-| triton-origin-x86\_64-19.2.0   | `image_ver:19.2.0 && pkgsrc_arch:x86_64`    |
-| triton-origin-x86\_64-19.1.0   | `image_ver:19.1.0 && pkgsrc_arch:x86_64`    |
 | triton-origin-x86\_64-18.4.0   | `image_ver:18.4.0 && pkgsrc_arch:x86_64`    |
-| triton-origin-multiarch-18.1.0 | `image_ver:18.1.0 && pkgsrc_arch:multiarch` |
 | triton-origin-multiarch-15.4.1 | `image_ver:15.4.1 && pkgsrc_arch:multiarch` |
 
 See the internal <https://mo.joyent.com/docs/engdoc/master/jenkins/index.html#agent-labels>
@@ -207,9 +202,9 @@ You can build images on your workstation using the standard engbld targets (such
 as `buildimage` or `bits-upload`).  Because there are multiple origin images
 defined, there are a few different ways to invoke the targets.  Examples:
 
- * `make triton-origin-x86_64-18.4.0-buildimage` (Convenience wrapper.)
- * `cd images/triton-origin-x86_64-18.4.0 && make buildimage`
- * `make all-buildimage` (To build all iamges)
+ * `make triton-origin-x86_64-19.4.0-buildimage` (Convenience wrapper.)
+ * `cd images/triton-origin-x86_64-19.4.0 && make buildimage`
+ * `make all-buildimage` (To build all images)
 
 
 ### Testing a new triton-origin image
@@ -255,10 +250,10 @@ How to release a new triton-origin image:
 
     For example:
 
-        $ updates-imgadm -C dev list --latest name=~triton-origin
-        UUID                                  NAME                            VERSION  FLAGS  OS       PUBLISHED
-        e24bd5b7-f06b-4d6a-84f1-45c0b342e4d2  triton-origin-multiarch-15.4.1  1.0.0    I      smartos  2017-05-02T06:42:18Z
-        b6ea7cb4-6b90-48c0-99e7-1d34c2895248  triton-origin-multiarch-18.1.0  1.0.1    I      smartos  2018-05-21T18:28:19Z
+        $ updates-imgadm -C release list --latest name=~triton-origin-
+        UUID                                  NAME                            VERSION                           FLAGS  OS       PUBLISHED
+        04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f  triton-origin-multiarch-15.4.1  1.0.1                             I      smartos  2017-05-09T22:06:48Z
+        59ba2e5e-976f-4e09-8aac-a4a7ef0395f5  triton-origin-x86_64-19.4.0     master-20200130T200825Z-gbb45b8d  I      smartos  2020-01-30T20:11:05Z
 
 2. Create a [TRITON](https://jira.joyent.us/browse/TRITON) ticket to
    note the release of new triton-origin images. Include the listing from
@@ -297,19 +292,12 @@ How to release a new triton-origin image:
     submodule to be updated.
 
     These mappings are:
-      * `$PKGSRC_MAP`: the human-readable pkgsrc version (e.g. 2018Q1)
+      * `$PKGSRC_MAP`: the human-readable pkgsrc version (e.g. 2019Q4)
       * `$SDC_MAP`: the human-readable name of the origin image
-        (e.g. triton-origin-multiarch-18.1.0@1.0.1)
+        (e.g. triton-origin-x86_64-19.4.0@master-20200130T200825Z-gbb45b8d)
       * `$JENKINS_AGENT_MAP`: the corresponding jenkins-agent image uuid
       * `$PKGSRC_PKGS_*``: the list of pkgsrc packages expected to be present on
         the build machine
-
-### Warning: minimal 16.4.1
-
-The 16.4.x generation of base/minimal images has issue DATASET-1297
-("base-64-lts 16.4.1 image is broken: does not work on platforms older than
-20161108T160947Z"), which is a blocker for triton-origin usage. JoshW mentions
-that to use these we could run them through the deholer.
 
 
 ## License
