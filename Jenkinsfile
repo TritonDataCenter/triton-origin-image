@@ -5,10 +5,10 @@
  */
 
 /*
- * Copyright 2020 Joyent, Inc.
+ * Copyright 2021 Joyent, Inc.
  */
 
-@Library('jenkins-joylib@v1.0.6') _
+@Library('jenkins-joylib@v1.0.8') _
 
 pipeline {
 
@@ -108,7 +108,7 @@ make print-BRANCH print-STAMP triton-origin-x86_64-19.4.0-"buildimage bits-uploa
 
     post {
         always {
-            joyMattermostNotification()
+            joySlackNotifications()
         }
     }
 }
