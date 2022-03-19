@@ -2,6 +2,6 @@
 /tmp
 /build
 /npm-debug.log
-/make_stamps
+make_stamps
 /bits
 /package-lock.json

@@ -10,7 +10,7 @@
 
 # Definitions (or overrides) for variables defined in the "eng" Makefiles
 ENGBLD_REQUIRE := $(shell git submodule update --init $(TOP)/deps/eng)
-MAKE_STAMPS_DIR:=$(TOP)/make_stamps
+MAKE_STAMPS_DIR:=make_stamps
 GITHASH := $(shell git log -1 --pretty='%H')
 ENGBLD_USE_BUILDIMAGE:=true
 
