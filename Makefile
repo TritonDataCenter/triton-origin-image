@@ -4,7 +4,7 @@
 #
 
 #
-# Copyright 2020 Joyent, Inc.
+# Copyright 2022 Joyent, Inc.
 #
 
 #
@@ -21,6 +21,11 @@ CLEAN_FILES += ./build
 DIST_CLEAN_FILES += ./node_modules/ ./build ./bits
 NPM = npm
 JSON = ./node_modules/.bin/json
+
+ALL_TARGETS = triton-origin-multiarch-15.4.1-%
+ALL_TARGETS += triton-origin-x86_64-18.4.0-%
+ALL_TARGETS += triton-origin-x86_64-19.4.0-%
+ALL_TARGETS += triton-origin-x86_64-21.4.0-%
 
 #
 # Targets
@@ -57,25 +62,28 @@ cutarelease: check-version
 #
 triton-origin-multiarch-15.4.1-%:
 	@echo '$*'
+	rm make_stamps ; ln -s images/triton-origin-multiarch-15.4.1/make_stamps make_stamps
 	cd images/triton-origin-multiarch-15.4.1 && $(MAKE) $*
 
 triton-origin-x86_64-18.4.0-%:
 	@echo '$*'
+	rm make_stamps ; ln -s images/triton-origin-x86_64-18.4.0/make_stamps make_stamps
 	cd images/triton-origin-x86_64-18.4.0 && $(MAKE) $*
 
 triton-origin-x86_64-19.4.0-%:
 	@echo '$*'
+	rm make_stamps ; ln -s images/triton-origin-x86_64-19.4.0/make_stamps make_stamps
 	cd images/triton-origin-x86_64-19.4.0 && $(MAKE) $*
+
+triton-origin-x86_64-21.4.0-%:
+	@echo '$*'
+	rm make_stamps ; ln -s images/triton-origin-x86_64-21.4.0/make_stamps make_stamps
+	cd images/triton-origin-x86_64-21.4.0 && $(MAKE) $*
 
 #
 # Convenience wrapper to run the same target for each image
 #
-all-%:
+all-%: $(ALL_TARGETS)
 	@echo '$*'
-	cd images/triton-origin-multiarch-15.4.1 && $(MAKE) $*
-	cd images/triton-origin-x86_64-18.4.0 && $(MAKE) $*
-	cd images/triton-origin-x86_64-19.4.0 && $(MAKE) $*
-
-
 
 include ./deps/eng/tools/mk/Makefile.targ
