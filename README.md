@@ -107,6 +107,7 @@ files. We will try to keep this table up to date:
 
 | triton-origin image            | based on                     | sdcnode compatible build         | `NODE_PREBUILT_VERSION`              |
 | ------------------------------ | ---------------------------- | -------------------------------- | ------------------------------------ |
+| triton-origin-x86\_64-21.4.0   | minimal-64-lts@21.4.0        | minimal-64-lts@21.4.0            | a7199134-7e94-11ec-be67-db6f482136c2 |
 | triton-origin-x86\_64-19.4.0   | minimal-64-lts@19.4.0        | minimal-64-lts@19.4.0            | 5417ab20-3156-11ea-8b19-2b66f5e7a439 |
 | triton-origin-x86\_64-18.4.0   | minimal-64-lts@18.4.0        | minimal-64-lts@18.4.0            | c2c31b00-1d60-11e9-9a77-ff9f06554b0f |
 | triton-origin-multiarch-15.4.1 | minimal-multiarch-lts@15.4.1 | sdc-minimal-multiarch-lts@15.4.1 | 18b094b0-eb01-11e5-80c1-175dac7ddf02 |
@@ -127,6 +128,8 @@ files. We will try to keep this table up to date:
 
 | triton-origin image            | Jenkins agent labels                        |
 | ------------------------------ | ------------------------------------------- |
+| triton-origin-x86\_64-22.4.0   | `image_ver:22.4.0 && pkgsrc_arch:x86_64`    |
+| triton-origin-x86\_64-21.4.0   | `image_ver:21.4.0 && pkgsrc_arch:x86_64`    |
 | triton-origin-x86\_64-19.4.0   | `image_ver:19.4.0 && pkgsrc_arch:x86_64`    |
 | triton-origin-x86\_64-18.4.0   | `image_ver:18.4.0 && pkgsrc_arch:x86_64`    |
 | triton-origin-multiarch-15.4.1 | `image_ver:15.4.1 && pkgsrc_arch:multiarch` |

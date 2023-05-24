@@ -142,7 +142,7 @@ make print-BRANCH print-STAMP triton-origin-x86_64-21.4.0-"buildimage bits-uploa
         stage('triton-origin-image-x86_64-22.4.0') {
             agent {
                 node {
-                    label joyCommonLabels(image_ver: '22.4.0',
+                    label joyCommonLabels(image_ver: '21.4.0',
                         pi:'20210826T002459Z')
                 }
             }
