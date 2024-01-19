@@ -1,16 +1,17 @@
 # triton-origin-image
 
-This repository is part of the Joyent Triton project. See the [contribution
-guidelines](https://github.com/joyent/triton/blob/master/CONTRIBUTING.md)
-and general documentation at the main
-[Triton project](https://github.com/joyent/triton) page.
+This repository is part of the Triton Data Center project. See the
+[contribution
+guidelines](https://github.com/TritonDataCenter/triton/blob/master/CONTRIBUTING.md)
+and general documentation at the main [Triton
+project](https://github.com/TritonDataCenter/triton) page.
 
 This repository defines how "triton-origin" images -- for use as the origin
 image for core Triton (and Manta) components -- are built. [RFD 46: Origin
 images for Triton and Manta core
-images](https://github.com/joyent/rfd/tree/master/rfd/0046) is the primary
-design document for this repo. The goal is to provide a single (or small set) of
-origin images for all Triton and Manta VM components:
+images](https://github.com/TritonDataCenter/rfd/tree/master/rfd/0046) is the
+primary design document for this repo. The goal is to provide a single (or
+small set) of origin images for all Triton and Manta VM components:
 
 - to save space for distribution, and
 - to have a well documented common base to help with maintenance.
@@ -20,8 +21,8 @@ origin images for all Triton and Manta VM components:
 
 - This repo builds one or more "triton-origin-$pkgsrcArch-$originVer@$version"
   images, e.g. "triton-origin-x86_64-19.4.0@master-20200130T200825Z-gbb45b8d",
-  and publishes them to updates.joyent.com. (See the "Building triton-origin
-  images" section below.)
+  and publishes them to updates.tritondatacenter.com. (See the "Building
+  triton-origin images" section below.)
 - After sanity testing, those images are "released" for use by Triton/Manta
   components. (See the "Releasing triton-origin images" section below.)
 - A Triton/Manta core component, say VMAPI, uses one of these images as the
@@ -64,7 +65,7 @@ to using a triton-origin image.
         patch
         sudo
 
-4. If your component uses [sdcnode](https://github.com/joyent/sdcnode) (most
+4. If your component uses [sdcnode](https://github.com/TritonDataCenter/sdcnode) (most
    currently do), then you may need to update `NODE_PREBUILT_` variables in
    your Makefile. You probably have a block like this:
 
@@ -84,7 +85,7 @@ to using a triton-origin image.
 
     For example, say you are using "triton-origin-x86_64-19.4.0@master-20200130T200825Z-gbb45b8d".
     That is based on "minimal-64-lts@19.4.0".
-    From <https://us-east.manta.joyent.com/Joyent_Dev/public/releng/sdcnode/README.html> we see
+    From <https://us-central.manta.mnx.io/Joyent_Dev/public/releng/sdcnode/README.html> we see
     that there are sdcnode builds for "minimal-64-lts@19.4.0":
     5417ab20-3156-11ea-8b19-2b66f5e7a439". Therefore we want:
 
@@ -101,11 +102,12 @@ to using a triton-origin image.
 
 Ultimately the authority for which sdcnode builds and triton-origin images are
 available is defined in this repo and [sdcnode
-nodeconfigs.json](https://github.com/joyent/sdcnode/blob/master/nodeconfigs.json)
+nodeconfigs.json](https://github.com/TritonDataCenter/sdcnode/blob/master/nodeconfigs.json)
 files. We will try to keep this table up to date:
 
 | triton-origin image            | based on                     | sdcnode compatible build         | `NODE_PREBUILT_VERSION`              |
 | ------------------------------ | ---------------------------- | -------------------------------- | ------------------------------------ |
+| triton-origin-x86\_64-21.4.0   | minimal-64-lts@21.4.0        | minimal-64-lts@21.4.0            | a7199134-7e94-11ec-be67-db6f482136c2 |
 | triton-origin-x86\_64-19.4.0   | minimal-64-lts@19.4.0        | minimal-64-lts@19.4.0            | 5417ab20-3156-11ea-8b19-2b66f5e7a439 |
 | triton-origin-x86\_64-18.4.0   | minimal-64-lts@18.4.0        | minimal-64-lts@18.4.0            | c2c31b00-1d60-11e9-9a77-ff9f06554b0f |
 | triton-origin-multiarch-15.4.1 | minimal-multiarch-lts@15.4.1 | sdc-minimal-multiarch-lts@15.4.1 | 18b094b0-eb01-11e5-80c1-175dac7ddf02 |
@@ -122,51 +124,57 @@ files. We will try to keep this table up to date:
   origin image. Eventually, these sdcnode flavours will be phased out.
 
 
-### Joyent Jenkins agent labels compatibility with triton-origin images
+### Jenkins agent labels compatibility with triton-origin images
 
 | triton-origin image            | Jenkins agent labels                        |
 | ------------------------------ | ------------------------------------------- |
+| triton-origin-x86\_64-23.4.0   | `image_ver:23.4.0 && pkgsrc_arch:x86_64`    |
+| triton-origin-x86\_64-21.4.0   | `image_ver:21.4.0 && pkgsrc_arch:x86_64`    |
 | triton-origin-x86\_64-19.4.0   | `image_ver:19.4.0 && pkgsrc_arch:x86_64`    |
 | triton-origin-x86\_64-18.4.0   | `image_ver:18.4.0 && pkgsrc_arch:x86_64`    |
 | triton-origin-multiarch-15.4.1 | `image_ver:15.4.1 && pkgsrc_arch:multiarch` |
 
-See the internal <https://mo.joyent.com/docs/engdoc/master/jenkins/index.html#agent-labels>
-for details.
+See the internal
+<https://engdoc.tritondatacenter.com/jenkins/index.html#agent-labels> for
+details.
 
 
 ## Development of triton-origin images
 
-The triton-origin images to be built are defined in Makefiles that reside in the
-`images` directory.  They use [engbld](https://github.com/joyent/eng/) just like
-the components themselves do. This set should remain small to avoid having a
-large number of origin images in play that can increase the size of the Triton
-headnode build on the USB key; and to avoid a large testing/maintenance surface
-area.
+The triton-origin images to be built are defined in Makefiles that reside in
+the `images` directory.  They use
+[engbld](https://github.com/TritonDataCenter/eng/) just like the components
+themselves do. This set should remain small to avoid having a large number of
+origin images in play that can increase the size of the Triton headnode build
+on the USB key; and to avoid a large testing/maintenance surface area.
 
 The active set of triton-origin images is defined by which of them is being used
 by any current Triton/Manta component images. That is the `BASE_IMAGE_UUID` of
 all active components.
 
-Those UUIDs refer to origin images published to <https://updates.joyent.com>.
+Those UUIDs refer to origin images published to
+<https://updates.tritondatacenter.com>.
 
 
 ### Prerequisite Chains
 
-An intended invariant of an image repository (such as updates.joyent.com) is
-that the full origin chain of images for any image in that repository are also
-contained within the same repository (and in the same channel).  That means the
-image that a triton-origin image is "based on" (the origin of the origin) must
-be imported into updates.joyent.com from images.joyent.com.  The would typically
-by a base minimal image.
+An intended invariant of an image repository (such as
+updates.tritondatacenter.com) is that the full origin chain of images for any
+image in that repository are also contained within the same repository (and in
+the same channel).  That means the image that a triton-origin image is "based
+on" (the origin of the origin) must be imported into
+updates.tritondatacenter.com from images.tritondatacenter.com.  This would
+typically be a minimal base image.
 
-NOTE: Because updates.joyent.com is a "standalone" imgapi instance, it does not
-support the `-S` flag to `import`.
+NOTE: Because updates.tritondatacenter.com is a "standalone" imgapi instance,
+it does not support the `-S` flag to `import`.
 
-0. Use an updates.joyent.com operator account.
+0. Use an updates.tritondatacenter.com operator account.
 1. Locally download the manifest and file of the desired image from
-   images.joyent.com (`joyent-imgadm get` and `joyent-imgadm get-file`).
-2. Edit the manifst to set `public: false` (updates.joyent.com is a "private
-   Images API" and disallows public images).
+   images.tritondatacenter.com (`images-imgadm get` and
+   `images-imgadm get-file`).
+2. Edit the manifest to set `public: false` (updates.tritondatacenter.com is a
+   "private Images API" and disallows public images).
 3. Import the image ex: `./bin/updates-imgadm import -m foo.m -f foo.file`
 4. Use `updates-imgadm channel-add` to add the image to the `dev` and
    `experimental` channel if it is not already.
@@ -221,9 +229,9 @@ this will most likely look something like:
 ### Releasing triton-origin images
 
 Fully releasing triton-origin images for Triton and Manta releases (i.e., for
-images that make it to the updates.joyent.com "release" channel) and for public
-usage (e.g. per Triton developer guide documentation) is a manual process.
-Benefits of this being manual:
+images that make it to the updates.tritondatacenter.com "release" channel) and
+for public usage (e.g. per Triton developer guide documentation) is a manual
+process.  Benefits of this being manual:
 
 - We hopefully **reduce the number of active triton-origin images in use**. In
   the extreme, if every Triton component used a different triton-origin image,
@@ -255,14 +263,14 @@ How to release a new triton-origin image:
         04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f  triton-origin-multiarch-15.4.1  1.0.1                             I      smartos  2017-05-09T22:06:48Z
         59ba2e5e-976f-4e09-8aac-a4a7ef0395f5  triton-origin-x86_64-19.4.0     master-20200130T200825Z-gbb45b8d  I      smartos  2020-01-30T20:11:05Z
 
-2. Create a [TRITON](https://jira.joyent.us/browse/TRITON) ticket to
+2. Create a [TRITON](https://mnx.atlassian.net/browse/TRITON) ticket to
    note the release of new triton-origin images. Include the listing from
    step 1.
 
 3. Add the image to all of the "release" (required for Triton releases),
    "staging" (required for the Triton release process), "experimental" (needed
    for feature-branch builds of components), and "support" (required eventually
-   when Support takes release images) channels of updates.joyent.com:
+   when Support takes release images) channels of updates.tritondatacenter.com:
 
         updates-imgadm -C dev channel-add staging $UUID
         updates-imgadm -C dev channel-add release $UUID
@@ -276,16 +284,15 @@ How to release a new triton-origin image:
    a few extra things are required:
 
    - Add entries to the "compatibility" tables in the "sdcnode compatibility
-     with triton-origin images" and "Joyent Jenkins agent labels compatibility
+     with triton-origin images" and "Jenkins agent labels compatibility
      with triton-origin images" sections above.
-   - Build and provision new Jenkins Agents to Joyent Engineering's CI system
+   - Build and provision new Jenkins Agents to Triton Engineering's CI system
      for building core components on this image. See
-     <https://github.com/joyent/jenkins-agent> for details and speak to JoshW,
-     TimF, or Trent.
+     <https://github.com/TritonDataCenter/jenkins-agent> for details.
    - Add sdcnode builds for this new image. See
-     <https://github.com/joyent/sdcnode>.
+     <https://github.com/TritonDataCenter/sdcnode>.
 
-5. [eng.git](https://github.com/joyent/eng/) includes a script
+5. [eng.git](https://github.com/TritonDataCenter/eng/) includes a script
    `./tools/validate-buildenv.sh` which must be updated to include mappings for
     the new origin image. After pushing changes to eng.git, any components which
     are expected to use the new origin image will need their `deps/eng`
