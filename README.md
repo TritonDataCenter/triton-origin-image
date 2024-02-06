@@ -166,6 +166,10 @@ on" (the origin of the origin) must be imported into
 updates.tritondatacenter.com from images.tritondatacenter.com.  This would
 typically be a minimal base image.
 
+NOTE: As of the triton-origin-image 23.4.0 release, new minimal-64-lts images
+are published to updates.tritondatacenter.com as part of the pkgsrc release
+process, so the instructions below are no longer required.
+
 NOTE: Because updates.tritondatacenter.com is a "standalone" imgapi instance,
 it does not support the `-S` flag to `import`.
 
@@ -214,6 +218,10 @@ defined, there are a few different ways to invoke the targets.  Examples:
  * `cd images/triton-origin-x86_64-19.4.0 && make buildimage`
  * `make all-buildimage` (To build all images)
 
+NOTE: due to the inherent chicken-and-egg problem, when creating a new
+triton-origin image it will need to be built on a previous image, as there will
+(obviously) be no Jenkins agents running the yet-to-be-created image.  As an
+example, the 23.4.0 triton-origin-image was built on a 21.4.0 agent.
 
 ### Testing a new triton-origin image
 
