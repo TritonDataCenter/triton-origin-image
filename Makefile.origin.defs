@@ -5,6 +5,7 @@
 
 #
 # Copyright 2019 Joyent, Inc.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
 
@@ -25,7 +26,7 @@ BUILDIMAGE_MF           = \
     {"name": "$(BUILDIMAGE_NAME)",\
     "description": "$(BUILDIMAGE_DESC)",\
     "version": "$(BUILDIMAGE_VERSION)",\
-    "homepage": "https://github.com/joyent/triton-origin-image",\
+    "homepage": "https://github.com/TritonDataCenter/triton-origin-image",\
     "tags": {\
       "branch": "$(BRANCH)",\
       "timestamp": "$(TIMESTAMP)",\

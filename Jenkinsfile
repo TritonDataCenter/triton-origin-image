@@ -6,6 +6,7 @@
 
 /*
  * Copyright 2022 Joyent, Inc.
+ * Copyright 2024 MNX Cloud, Inc.
  */
 
 @Library('jenkins-joylib@v1.0.8') _
@@ -42,6 +43,12 @@ pipeline {
             defaultValue: false,
             description: 'This parameter declares whether to build ' +
                 'triton-origin-x86_64-21.4.0'
+        )
+        booleanParam(
+            name: 'BUILD_23_4_0',
+            defaultValue: false,
+            description: 'This parameter declares whether to build ' +
+                'triton-origin-x86_64-23.4.0'
         )
     }
     stages {
@@ -129,6 +136,28 @@ set -o pipefail
 make clean distclean
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
 make print-BRANCH print-STAMP triton-origin-x86_64-21.4.0-"buildimage bits-upload"
+''')
+            }
+        }
+        stage('triton-origin-image-x86_64-23.4.0') {
+            agent {
+                node {
+                    label joyCommonLabels(image_ver: '21.4.0',
+                        pi:'20210826T002459Z')
+                }
+            }
+            when {
+                beforeAgent true
+                environment name: 'BUILD_23_4_0', value: 'true'
+            }
+            steps {
+                sh('''
+export TRACE=1
+set -o errexit
+set -o pipefail
+make clean distclean
+export ENGBLD_BITS_UPLOAD_IMGAPI=true
+make print-BRANCH print-STAMP triton-origin-x86_64-23.4.0-"buildimage bits-upload"
 ''')
             }
         }
