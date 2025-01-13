@@ -28,6 +28,7 @@ ALL_TARGETS += triton-origin-x86_64-18.4.0-%
 ALL_TARGETS += triton-origin-x86_64-19.4.0-%
 ALL_TARGETS += triton-origin-x86_64-21.4.0-%
 ALL_TARGETS += triton-origin-x86_64-23.4.0-%
+ALL_TARGETS += triton-origin-x86_64-24.4.1-%
 
 #
 # Targets
@@ -86,6 +87,11 @@ triton-origin-x86_64-23.4.0-%:
 	@echo '$*'
 	rm make_stamps ; ln -s images/triton-origin-x86_64-23.4.0/make_stamps make_stamps
 	cd images/triton-origin-x86_64-23.4.0 && $(MAKE) $*
+
+triton-origin-x86_64-24.4.1-%:
+	@echo '$*'
+	rm make_stamps ; ln -s images/triton-origin-x86_64-24.4.1/make_stamps make_stamps
+	cd images/triton-origin-x86_64-24.4.1 && $(MAKE) $*
 
 #
 # Convenience wrapper to run the same target for each image

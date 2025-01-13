@@ -128,6 +128,7 @@ files. We will try to keep this table up to date:
 
 | triton-origin image            | Jenkins agent labels                        |
 | ------------------------------ | ------------------------------------------- |
+| triton-origin-x86\_64-24.4.1   | `image_ver:24.4.1 && pkgsrc_arch:x86_64`    |
 | triton-origin-x86\_64-23.4.0   | `image_ver:23.4.0 && pkgsrc_arch:x86_64`    |
 | triton-origin-x86\_64-21.4.0   | `image_ver:21.4.0 && pkgsrc_arch:x86_64`    |
 | triton-origin-x86\_64-19.4.0   | `image_ver:19.4.0 && pkgsrc_arch:x86_64`    |
