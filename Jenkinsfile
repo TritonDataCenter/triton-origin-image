@@ -185,6 +185,7 @@ set -o errexit
 set -o pipefail
 make clean distclean
 export ENGBLD_BITS_UPLOAD_IMGAPI=true
+export ENGBLD_FORCE_LOCAL_BUILDIMAGE=true
 make print-BRANCH print-STAMP triton-origin-x86_64-24.4.1-"buildimage bits-upload"
 ''')
             }
